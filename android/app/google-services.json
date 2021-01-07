@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "271192488548",
+    "project_id": "my-kitchen-befa7",
+    "storage_bucket": "my-kitchen-befa7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:271192488548:android:2bf31d6a2ef8228ee0fd71",
+        "android_client_info": {
+          "package_name": "com.mykitchen.my_kitchen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "271192488548-cdfl7rvglh0q883t05cq4l9omh64ldu9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mykitchen.my_kitchen",
+            "certificate_hash": "c6ca277ffa10623e8f6f9a0640d22dc607db39d1"
+          }
+        },
+        {
+          "client_id": "271192488548-4gvavbk96ol6llr5m94nut50o611mfdv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuj1hv9MtLIp3zWvs-W0u9MY7IANwVXW4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "271192488548-4gvavbk96ol6llr5m94nut50o611mfdv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
