@@ -14,11 +14,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "271192488548-cdfl7rvglh0q883t05cq4l9omh64ldu9.apps.googleusercontent.com",
+          "client_id": "271192488548-0nm06as43q6ancu1dsrod7o1tekhdemo.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.mykitchen.my_kitchen",
             "certificate_hash": "c6ca277ffa10623e8f6f9a0640d22dc607db39d1"
+          }
+        },
+        {
+          "client_id": "271192488548-f8212j045cs0i50dcsrpfu2b8gtsogn8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mykitchen.my_kitchen",
+            "certificate_hash": "0668e4226564374d7e0af54ae21b321b377fb9a8"
           }
         },
         {
@@ -40,7 +48,8 @@
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-2166356757208745~8542467714"
     }
   ],
   "configuration_version": "1"

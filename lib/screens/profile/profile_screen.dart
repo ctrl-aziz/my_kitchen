@@ -166,7 +166,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: Column(
         children: [
-          SizedBox(height: 21.0,),
           PhotoWithName(),
           //UserTrafficData(),
           SizedBox(height: 10.0,),

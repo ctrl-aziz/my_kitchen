@@ -135,17 +135,20 @@ class _CustomizedBottomBarState extends State<CustomizedBottomBar> {
 class MyCustomPainter extends CustomPainter{
   final int index;
 
-  List<double> clickPosition = [
-    120.0,
-    40.0,
-    -40.0,
-    -120.0
-  ];
+
 
   MyCustomPainter(this.index);
 
   @override
   void paint(Canvas canvas, Size size) {
+
+    List<double> clickPosition = [
+      size.width*0.3334,
+      size.width*0.1112,
+      -size.width*0.1112,
+      -size.width*0.3334
+    ];
+
     double pos = (size.width * 0.20);
     double pos2 = isLeftToRight ? clickPosition.reversed.toList()[index] : clickPosition[index];
     double pos3 = size.width * 0.35;
