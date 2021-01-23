@@ -8,6 +8,8 @@ import 'package:my_kitchen/localizations/app_localizations.dart';
 import 'package:my_kitchen/models/foods.dart';
 import 'package:my_kitchen/screens/details/details_screen.dart';
 import 'package:my_kitchen/services/database/foods_database.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class RandomFoodScreen extends StatefulWidget {
   @override
@@ -20,11 +22,16 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
 
   final _wheelNotifier = StreamController<double>();
 
+  final keyOne = GlobalKey();
+  final keyTow = GlobalKey();
+  final keyThree = GlobalKey();
+
   final List<String> foodNames = [];
   final List<String> foodImages = [];
   final List<String> foodIds = [];
+  final List<int> foodLikes = [];
 
-  _fetchEntry(int index, String fid, int likes) async {
+  _fetchEntry(int index, String fid) async {
     await Future.delayed(Duration(milliseconds: 500));
     AppLocalizations translate = AppLocalizations.of(context);
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -59,7 +66,7 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('${foodNames.reversed.toList()[index]}', style: textTheme.subtitle1.copyWith(color: Colors.black54, fontWeight: FontWeight.bold),),
-                  Text("$likes${translate.translate("Likes")}", style: textTheme.subtitle2.copyWith(color: Colors.black45)),
+                  Text("${foodLikes.reversed.toList()[index]}${translate.translate("Likes")}", style: textTheme.subtitle2.copyWith(color: Colors.black45)),
                 ],
               ),
 
@@ -82,20 +89,50 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
     _endController.close();
   }
 
+  Future checkFirstSeen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool _seen = (prefs.getBool('rand_tut') ?? false);
+
+    if (_seen) {
+      print("Not First Time");
+    } else {
+      prefs.setBool('rand_tut', true);
+      WidgetsBinding.instance.addPostFrameCallback((_) => ShowCaseWidget.of(context).startShowCase([
+        keyOne,
+        keyTow,
+        keyThree
+      ]));
+      print("First Time User");
+    }
+  }
+
+  @override
+  void initState() {
+    new Timer(new Duration(milliseconds: 200), () {
+      checkFirstSeen();
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     AppLocalizations translate = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.cleaning_services_rounded),
-          onPressed: () {
-            setState(() {
-              foodNames.clear();
-              foodImages.clear();
-            });
-          },
+        leading: CustomShowcaseWidget(
+          globalKey: keyThree,
+          description: "اذا لم تعجبك الاقتراحات احذفها",
+          child: IconButton(
+            icon: Icon(Icons.cleaning_services_rounded),
+            onPressed: () {
+              setState(() {
+                foodNames.clear();
+                foodImages.clear();
+              });
+            },
+          ),
         ),
         title: Center(
             widthFactor: 1.7,
@@ -111,18 +148,22 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SpinningWheel(
-                    Image.asset(
-                      customIcons[0], color: mPrimaryColor.withOpacity(0.8),),
-                    width: 1,
-                    height: 1,
-                    initialSpinAngle: _generateRandomAngle(),
-                    spinResistance: 0.6,
-                    canInteractWhileSpinning: false,
-                    dividers: foodSnapshot.data.length,
-                    onUpdate: _dividerController.add,
-                    onEnd: _endController.add,
-                    shouldStartOrStop: _wheelNotifier.stream,
+                  CustomShowcaseWidget(
+                    globalKey: keyOne,
+                    description: "أذا كنت محتار شاهد اقتراح لطبختك",
+                    child: SpinningWheel(
+                      Image.asset(
+                        customIcons[0], color: mPrimaryColor.withOpacity(0.8),),
+                      width: 1,
+                      height: 1,
+                      initialSpinAngle: _generateRandomAngle(),
+                      spinResistance: 0.6,
+                      canInteractWhileSpinning: false,
+                      dividers: foodSnapshot.data.length,
+                      onUpdate: _dividerController.add,
+                      onEnd: _endController.add,
+                      shouldStartOrStop: _wheelNotifier.stream,
+                    ),
                   ),
                   SizedBox(height: 5.0,),
                   StreamBuilder(
@@ -172,19 +213,23 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
                       }
                     },
                   ),
-                  new RaisedButton(
-                    color: Colors.white,
-                    animationDuration: Duration(milliseconds: 500),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    elevation: 4.0,
-                    child: new Text("${translate.translate("Choose your food")}",),
-                    onPressed: () {
-                      _wheelNotifier.sink.add(_generateRandomVelocity());
-                      // print(_wheelNotifier);
-                      // _dividerController.sink.add(_generateRandomAngle().toInt());
+          CustomShowcaseWidget(
+                    globalKey: keyTow,
+                    description: 'اضغط هنا للحصول على اقتراحات لطبختك',
+                    child: new RaisedButton(
+                      color: Colors.white,
+                      animationDuration: Duration(milliseconds: 500),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0)),
+                      elevation: 4.0,
+                      child: new Text("${translate.translate("Choose your food")}",),
+                      onPressed: () {
+                        _wheelNotifier.sink.add(_generateRandomVelocity());
+                        // print(_wheelNotifier);
+                        // _dividerController.sink.add(_generateRandomAngle().toInt());
 
-                    },
+                      },
+                    ),
                   ),
                   Expanded(
                     child: StreamBuilder(
@@ -201,6 +246,8 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
                                   foodSnapshot.data[foodPosition].name);
                               foodIds.add(
                                   foodSnapshot.data[foodPosition].infid);
+                              foodLikes.add(
+                                  foodSnapshot.data[foodPosition].like.length);
                             }
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 60.0),
@@ -208,7 +255,7 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
                                 itemCount: foodImages.length,
                                 itemBuilder: (context, index) {
                                   return FutureBuilder(
-                                      future: this._fetchEntry(index, foodIds.reversed.toList()[index], foodSnapshot.data[index].like.length),
+                                      future: this._fetchEntry(index, foodIds.reversed.toList()[index]),
                                       // ignore: missing_return
                                       builder: (context, snapshot) {
                                         switch (snapshot.connectionState) {
@@ -254,5 +301,25 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
   double _generateRandomVelocity() => (Random().nextDouble() * 6000) + 2000;
 
   double _generateRandomAngle() => Random().nextDouble() * pi * 2;
+
+}
+
+class CustomShowcaseWidget extends StatelessWidget {
+  final Widget child;
+  final String description;
+  final GlobalKey globalKey;
+
+  const CustomShowcaseWidget({
+    @required this.description,
+    @required this.globalKey,
+    @required this.child});
+
+  @override
+  Widget build(BuildContext context) => Showcase(
+      key: globalKey,
+      child: child,
+      description: description,
+  );
+
 
 }

@@ -8,6 +8,7 @@ import 'package:my_kitchen/services/database/user_database.dart';
 import 'package:provider/provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
+// ignore: must_be_immutable
 class PhotoWithName extends StatelessWidget {
 
   List<Color> levelColors = [

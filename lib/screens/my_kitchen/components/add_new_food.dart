@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
@@ -12,6 +13,8 @@ import 'package:my_kitchen/models/user.dart';
 import 'package:my_kitchen/services/database/foods_database.dart';
 import 'package:my_kitchen/services/database/user_database.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:uuid/uuid.dart';
 
 import 'upload_image_helper.dart';
@@ -27,6 +30,10 @@ class AddNewFood extends StatefulWidget {
 
 class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
   final position;
+  final keyOne = GlobalKey();
+  final keyTow = GlobalKey();
+  final keyThree = GlobalKey();
+  final keyFour = GlobalKey();
 
   io.File _selectedFile;
   NetworkImage _networkImage;
@@ -60,8 +67,29 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
 
   _AddNewFoodState(this.position);
 
+  Future checkFirstSeen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool _seen = (prefs.getBool('Add_tut') ?? false);
+
+    if (_seen) {
+      print("Not First Time");
+    } else {
+      prefs.setBool('Add_tut', true);
+      WidgetsBinding.instance.addPostFrameCallback((_) => ShowCaseWidget.of(context).startShowCase([
+        keyOne,
+        keyTow,
+        keyThree,
+        keyFour,
+      ]));
+      print("First Time User");
+    }
+  }
+
   @override
   void initState() {
+    new Timer(new Duration(milliseconds: 200), () {
+      checkFirstSeen();
+    });
     _selected[0] = true;
     fid = uuid.v1();
     myFocusNode = FocusNode();
@@ -135,149 +163,153 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                   return Column(
                     children: [
                       /// Select food image
-                      Container(
-                        child: Stack(
-                          children: [
-                            InkWell(
-                              child: _selectedFile == null
-                                  ?
-                              (
-                                  _networkImage == null
-                                      ?
-                                  Container(
-                                width: size
-                                    .width,
-                                height: 150,
-                                child: Center(
-                                    heightFactor: 2.0, child: Container(child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.image, size: 75.0,),
-                                    Text("${translate.translate("Choose image")}",
-                                      style: Theme
-                                          .of(context)
-                                          .textTheme
-                                          .subtitle1,)
-                                  ],
-                                ))
-                                ),
-                              )
-                                  :
-                                  Container(
-                                    width: size
-                                        .width,
-                                    height: 200,
-                                    alignment: Alignment.center,
-                                    margin: EdgeInsets.all(0.0),
-                                    decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            image: _networkImage,
-                                            fit: BoxFit.cover
-                                        )
-                                    ),
-                                    child: Container(
-                                        width: size
-                                            .width,
-                                        height: 200,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          color: mBrownColor,
-                                        ),
-                                        child: Text("")
-                                    ),
-                                  )
-                              )
-                                  :
-                              Container(
-                                width: size
-                                    .width,
-                                height: 200,
-                                alignment: Alignment.center,
-                                margin: EdgeInsets.all(0.0),
-                                decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        image: FileImage(_selectedFile),
-                                        fit: BoxFit.cover
+                      CustomShowcaseWidget(
+                        globalKey: keyOne,
+                        description: "أختر صورة لطبختك",
+                        child: Container(
+                          child: Stack(
+                            children: [
+                              InkWell(
+                                child: _selectedFile == null
+                                    ?
+                                (
+                                    _networkImage == null
+                                        ?
+                                    Container(
+                                  width: size
+                                      .width,
+                                  height: 150,
+                                  child: Center(
+                                      heightFactor: 2.0, child: Container(child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.image, size: 75.0,),
+                                      Text("${translate.translate("Choose image")}",
+                                        style: Theme
+                                            .of(context)
+                                            .textTheme
+                                            .subtitle1,)
+                                    ],
+                                  ))
+                                  ),
+                                )
+                                    :
+                                    Container(
+                                      width: size
+                                          .width,
+                                      height: 200,
+                                      alignment: Alignment.center,
+                                      margin: EdgeInsets.all(0.0),
+                                      decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              image: _networkImage,
+                                              fit: BoxFit.cover
+                                          )
+                                      ),
+                                      child: Container(
+                                          width: size
+                                              .width,
+                                          height: 200,
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            color: mBrownColor,
+                                          ),
+                                          child: Text("")
+                                      ),
                                     )
+                                )
+                                    :
+                                Container(
+                                  width: size
+                                      .width,
+                                  height: 200,
+                                  alignment: Alignment.center,
+                                  margin: EdgeInsets.all(0.0),
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: FileImage(_selectedFile),
+                                          fit: BoxFit.cover
+                                      )
+                                  ),
+                                  child: Container(
+                                      width: size
+                                          .width,
+                                      height: 200,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: mBrownColor,
+                                      ),
+                                      child: Text("")
+                                  ),
                                 ),
-                                child: Container(
-                                    width: size
-                                        .width,
-                                    height: 200,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      color: mBrownColor,
-                                    ),
-                                    child: Text("")
-                                ),
+                                onTap: () {
+                                  _chooseCameraOrGallery(context);
+                                },
                               ),
-                              onTap: () {
-                                _chooseCameraOrGallery(context);
-                              },
-                            ),
-                            (_selectedFile != null || _networkImage != null) ? Positioned(
-                              right: size.width / 7,
-                              left: size.width / 5,
-                              top: 30.0,
-                              child: Container(
-                                alignment: Alignment.center,
-                                width: size.width * .6,
-                                padding: EdgeInsets.only(right: mDefaultPadding / 3),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    TextField(
-                                      controller: _foodNameController,
-                                      autofocus: true,
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: '${translate.translate(
-                                            "Food Name")}',
-                                        hintStyle: Theme
+                              (_selectedFile != null || _networkImage != null) ? Positioned(
+                                right: size.width / 7,
+                                left: size.width / 5,
+                                top: 30.0,
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  width: size.width * .6,
+                                  padding: EdgeInsets.only(right: mDefaultPadding / 3),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      TextField(
+                                        controller: _foodNameController,
+                                        autofocus: true,
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: '${translate.translate(
+                                              "Food Name")}',
+                                          hintStyle: Theme
+                                              .of(context)
+                                              .textTheme
+                                              .headline5
+                                              .copyWith(color: mWhiteColor,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        style: Theme
                                             .of(context)
                                             .textTheme
                                             .headline5
                                             .copyWith(color: mWhiteColor,
                                             fontWeight: FontWeight.bold),
-                                      ),
-                                      style: Theme
-                                          .of(context)
-                                          .textTheme
-                                          .headline5
-                                          .copyWith(color: mWhiteColor,
-                                          fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.center,
-                                      onChanged: (value) {
+                                        textAlign: TextAlign.center,
+                                        onChanged: (value) {
 
-                                      },
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text("${translate.translate("By")} ",
-                                          style: textTheme.subtitle2.copyWith(
-                                              color: mWhiteColor),),
-                                        Text("${userSnapshot.data.name}",
-                                          style: textTheme.subtitle2.copyWith(
-                                              color: mWhiteColor),),
-                                      ],
-                                    ),
-                                  ],
+                                        },
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text("${translate.translate("By")} ",
+                                            style: textTheme.subtitle2.copyWith(
+                                                color: mWhiteColor),),
+                                          Text("${userSnapshot.data.name}",
+                                            style: textTheme.subtitle2.copyWith(
+                                                color: mWhiteColor),),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ) : Container(),
-                            (_inProcess) ? Center(
-                              child: Container(
-                                color: mWhiteColor,
-                                height: size
-                                    .height * 0.87,
-                                child: Center(
-                                  child: CircularProgressIndicator(),
+                              ) : Container(),
+                              (_inProcess) ? Center(
+                                child: Container(
+                                  color: mWhiteColor,
+                                  height: size
+                                      .height * 0.87,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
                                 ),
-                              ),
-                            ) : Center()
-                          ],
+                              ) : Center()
+                            ],
+                          ),
                         ),
                       ),
                       /// Fill foods information
@@ -289,61 +321,65 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                         child: Column(
                           children: [
                             /// Fill Countries details
-                            Container(
-                                height: 100.0,
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      child: Text("${translate.translate(
-                                          "Choose food's countries")}", style: Theme
-                                          .of(context)
-                                          .textTheme
-                                          .headline6,),
-                                      alignment: Alignment.centerRight,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: mDefaultPadding*0.75),
-                                    ),
-                                    Container(
-                                      height: 50.0,
-                                      child: ListView.builder(
-                                          itemCount: title.length,
-                                          scrollDirection: Axis.horizontal,
-                                          itemBuilder: (context, index) {
-                                            return Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: mDefaultPadding*0.25, vertical: mDefaultPadding*0.25),
-                                              child: FlatButton(
-                                                child: Text(translate.translate("${title[index]}")),
-                                                color: (countryList.contains(
-                                                    reCountries[title[index]]))
-                                                    ? mWhiteColor
-                                                    : mGrayColor[300],
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius
-                                                        .circular(20.0)
+                            CustomShowcaseWidget(
+                              globalKey: keyTow,
+                              description: "أختر البلد المتواجد فيها هذه الطبخة",
+                              child: Container(
+                                  height: 100.0,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        child: Text("${translate.translate(
+                                            "Choose food's countries")}", style: Theme
+                                            .of(context)
+                                            .textTheme
+                                            .headline6,),
+                                        alignment: Alignment.centerRight,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: mDefaultPadding*0.75),
+                                      ),
+                                      Container(
+                                        height: 50.0,
+                                        child: ListView.builder(
+                                            itemCount: title.length,
+                                            scrollDirection: Axis.horizontal,
+                                            itemBuilder: (context, index) {
+                                              return Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                    horizontal: mDefaultPadding*0.25, vertical: mDefaultPadding*0.25),
+                                                child: FlatButton(
+                                                  child: Text(translate.translate("${title[index]}")),
+                                                  color: (countryList.contains(
+                                                      reCountries[title[index]]))
+                                                      ? mWhiteColor
+                                                      : mGrayColor[300],
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius
+                                                          .circular(20.0)
+                                                  ),
+                                                  onPressed: () {
+                                                    if (!countryList.contains(
+                                                        reCountries[title[index]])) {
+                                                      setState(() {
+                                                        countryList.add(
+                                                            reCountries[title[index]]);
+                                                      });
+                                                    } else {
+                                                      print(index);
+                                                      print(countryList);
+                                                      setState(() {
+                                                        countryList.remove(
+                                                            reCountries[title[index]]);
+                                                      });
+                                                    }
+                                                  },
                                                 ),
-                                                onPressed: () {
-                                                  if (!countryList.contains(
-                                                      reCountries[title[index]])) {
-                                                    setState(() {
-                                                      countryList.add(
-                                                          reCountries[title[index]]);
-                                                    });
-                                                  } else {
-                                                    print(index);
-                                                    print(countryList);
-                                                    setState(() {
-                                                      countryList.remove(
-                                                          reCountries[title[index]]);
-                                                    });
-                                                  }
-                                                },
-                                              ),
-                                            );
-                                          }),
-                                    ),
-                                  ],
-                                )
+                                              );
+                                            }),
+                                      ),
+                                    ],
+                                  )
+                              ),
                             ),
                             /// Fill Food Content list
                             /// Fill howToDo list
@@ -386,107 +422,116 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                               ),
                             ),
                             SizedBox(height: 3.0,),
-                            Container(
-                                width: size
-                                    .width,
-                                height: 320,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(Radius.circular(
-                                      9.0)),
-                                  color: mWhiteColor,
-                                ),
-                                child: (_selected[0] && !_selected[1])
-                                    ? content(translate)
-                                    : howToDo(translate)
+                            CustomShowcaseWidget(
+                              globalKey: keyThree,
+                              description: "أضف المكونات و كيفية تحضير طبختك هنا",
+                              child: Container(
+                                  width: size
+                                      .width,
+                                  height: 320,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(
+                                        9.0)),
+                                    color: mWhiteColor,
+                                  ),
+                                  child: (_selected[0] && !_selected[1])
+                                      ? content(translate)
+                                      : howToDo(translate)
+                              ),
                             ),
                             SizedBox(height: 10.0,),
                             /// Send data to database and storage
                             /// if [FoodDatabaseService()] content are fill
-                            RaisedButton(
-                                color: mPrimaryColor,
-                                splashColor: mPrimaryColor.withOpacity(0.5),
-                                highlightColor: mPrimaryColor.withOpacity(0.5),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: BorderSide(color: mPrimaryColor)
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: mDefaultPadding*5, vertical: 1.0),
-                                child: Text(
-                                  "${translate.translate("Save")}", style: Theme
-                                    .of(context)
-                                    .textTheme
-                                    .headline5
-                                    .copyWith(color: mWhiteColor,
-                                    fontWeight: FontWeight.bold),),
-                                onPressed: () async{
-                                  if (_selectedFile != null) {
-                                    await uploadFile(_selectedFile, _user.uid, fid);
-                                  }
-                                  if (contentList.isNotEmpty &&
-                                      howToDoList.isNotEmpty &&
-                                      _user != null) {
-                                    if(contentList.contains("")){
-                                      setState(() {
-                                        contentList.remove("");
-                                      });
+                            CustomShowcaseWidget(
+                              globalKey: keyFour,
+                              description: "عند الانتهاء شارك طبختك لكي يعرف عنها الجميع",
+                              child: RaisedButton(
+                                  color: mPrimaryColor,
+                                  splashColor: mPrimaryColor.withOpacity(0.5),
+                                  highlightColor: mPrimaryColor.withOpacity(0.5),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18.0),
+                                      side: BorderSide(color: mPrimaryColor)
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: mDefaultPadding*5, vertical: 1.0),
+                                  child: Text(
+                                    "${translate.translate("Share")}", style: Theme
+                                      .of(context)
+                                      .textTheme
+                                      .headline5
+                                      .copyWith(color: mWhiteColor,
+                                      fontWeight: FontWeight.bold),),
+                                  onPressed: () async{
+                                    if (_selectedFile != null) {
+                                      await uploadFile(_selectedFile, _user.uid, fid);
                                     }
-                                    if(howToDoList.contains("")){
-                                      setState(() {
-                                        howToDoList.remove("");
-                                      });
-                                    }
-                                    print(_user.uid);
-                                    if(imageUrl == null){
-                                      Fluttertoast.showToast(msg: "جار التحميل اضغط مرة اخرى للحفظ");
-                                    }else{
-                                      UserDatabaseService(uid: _user.uid)
-                                          .updateUserDataByOne(
-                                          target: 'foods',
-                                          value: fid
-                                      );
-                                      FoodDatabaseService(fid: fid).updateFoodData(
-                                          infid: fid,
-                                          name: _foodNameController.text,
-                                          image: imageUrl,
-                                          owner: userSnapshot.data.name,
-                                          content: contentList,
-                                          howToDo: howToDoList,
-                                          favorite: favorite,
-                                          like: like,
-                                          country: countryList
-                                      );
-                                    }
+                                    if (contentList.isNotEmpty &&
+                                        howToDoList.isNotEmpty &&
+                                        _user != null) {
+                                      if(contentList.contains("")){
+                                        setState(() {
+                                          contentList.remove("");
+                                        });
+                                      }
+                                      if(howToDoList.contains("")){
+                                        setState(() {
+                                          howToDoList.remove("");
+                                        });
+                                      }
+                                      print(_user.uid);
+                                      if(imageUrl == null){
+                                        Fluttertoast.showToast(msg: "جار التحميل اضغط مرة اخرى للحفظ");
+                                      }else{
+                                        Fluttertoast.showToast(msg: "جار المشاركة...", toastLength: Toast.LENGTH_SHORT);
+                                        UserDatabaseService(uid: _user.uid)
+                                            .updateUserDataByOne(
+                                            target: 'foods',
+                                            value: fid
+                                        );
+                                        FoodDatabaseService(fid: fid).updateFoodData(
+                                            infid: fid,
+                                            name: _foodNameController.text,
+                                            image: imageUrl,
+                                            owner: userSnapshot.data.name,
+                                            content: contentList,
+                                            howToDo: howToDoList,
+                                            favorite: favorite,
+                                            like: like,
+                                            country: countryList
+                                        );
+                                      }
 
-                                    Scaffold.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text("${translate.translate(
-                                              "Food added successfully")}",
-                                            style: TextStyle(color: mTextColor),
-                                            textAlign: TextAlign.center,),
-                                          duration: Duration(seconds: 1),
-                                          backgroundColor: mWhiteColor,
-                                        )
-                                    );
-                                    Navigator.pop(context);
-                                  } else {
-                                    Scaffold.of(context).showSnackBar(
-                                        SnackBar(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(20.0),
-                                                topRight: Radius.circular(20.0)),
-                                          ),
-                                          content: Text("${translate.translate(
-                                              "Please fill all fields")}",
-                                            style: TextStyle(color: mTextColor),
-                                            textAlign: TextAlign.center,),
-                                          duration: Duration(seconds: 1),
-                                          backgroundColor: mWhiteColor,
-                                        )
-                                    );
+                                      Scaffold.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text("${translate.translate(
+                                                "Food added successfully")}",
+                                              style: TextStyle(color: mTextColor),
+                                              textAlign: TextAlign.center,),
+                                            duration: Duration(seconds: 1),
+                                            backgroundColor: mWhiteColor,
+                                          )
+                                      );
+                                      Navigator.pop(context);
+                                    } else {
+                                      Scaffold.of(context).showSnackBar(
+                                          SnackBar(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(20.0),
+                                                  topRight: Radius.circular(20.0)),
+                                            ),
+                                            content: Text("${translate.translate(
+                                                "Please fill all fields")}",
+                                              style: TextStyle(color: mTextColor),
+                                              textAlign: TextAlign.center,),
+                                            duration: Duration(seconds: 1),
+                                            backgroundColor: mWhiteColor,
+                                          )
+                                      );
+                                    }
                                   }
-                                }
+                              ),
                             )
                           ],
                         ),
@@ -641,6 +686,7 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
   }
 
   Column howToDo(AppLocalizations translate) {
+    print("how To Do $howToDoList");
     return Column(
       children: [
         Container(
@@ -657,7 +703,9 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                     leading: Text("${index + 1}. "),
                     title: (howToDoList[index] != null &&
                         howToDoList[index] != "" &&
-                        !_howToDoSwitchEdit[index]) ? Container(
+                        !_howToDoSwitchEdit[index])
+                        ?
+                    Container(
                       child: Text(howToDoList[index]),) : TextField(
                       controller: _howToDoControllers[index],
                       autofocus: true,
@@ -883,3 +931,25 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
     });
   }
 }
+
+class CustomShowcaseWidget extends StatelessWidget {
+  final Widget child;
+  final String description;
+  final GlobalKey globalKey;
+
+  const CustomShowcaseWidget({
+    @required this.description,
+    @required this.globalKey,
+    @required this.child});
+
+  @override
+  Widget build(BuildContext context) => Showcase(
+    key: globalKey,
+    child: child,
+    description: description,
+  );
+
+
+}
+
+

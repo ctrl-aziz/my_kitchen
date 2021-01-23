@@ -14,19 +14,27 @@
       },
       "oauth_client": [
         {
-          "client_id": "271192488548-0nm06as43q6ancu1dsrod7o1tekhdemo.apps.googleusercontent.com",
+          "client_id": "271192488548-0afolfe1tclqabup1df6iuhr02k20nog.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.mykitchen.my_kitchen",
-            "certificate_hash": "c6ca277ffa10623e8f6f9a0640d22dc607db39d1"
+            "certificate_hash": "b83fdc9feda6b06c24a6d80c2cfb6f139cb6767d"
           }
         },
         {
-          "client_id": "271192488548-f8212j045cs0i50dcsrpfu2b8gtsogn8.apps.googleusercontent.com",
+          "client_id": "271192488548-k1vv7pifr6qpr1un6g1ll8tkkb3nd7m5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.mykitchen.my_kitchen",
             "certificate_hash": "0668e4226564374d7e0af54ae21b321b377fb9a8"
+          }
+        },
+        {
+          "client_id": "271192488548-u6fn2bntlmuq5n5f9kv7rjjn4c5eomvi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mykitchen.my_kitchen",
+            "certificate_hash": "c6ca277ffa10623e8f6f9a0640d22dc607db39d1"
           }
         },
         {

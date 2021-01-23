@@ -16,7 +16,8 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   final position;
   List<bool> _selected = List.generate(2, (_) => false);
-
+  List<bool> contentCheckboxes = new List();
+  List<bool> howToDoCheckboxes = new List();
   _BodyState(this.position);
 
   @override
@@ -84,36 +85,63 @@ class _BodyState extends State<Body> {
 
 
   Container content(List<String> content){
+
     return Container(
         height: 250.0,
         child: ListView(
           children: List.generate(content.length, (index) {
+            if(contentCheckboxes.length < content.length){
+              contentCheckboxes.add(false);
+            }
             return Card(
               child: ListTile(
                 key: UniqueKey(),
-                leading: Text("${index + 1}. "),
+                leading: Checkbox(
+                  tristate: true,
+                  value: contentCheckboxes[index],
+                ),
                 title: Container(child: Text(content[index]),),
+                onTap: (){
+                  print(contentCheckboxes[index]);
+                  setState(() {
+                    contentCheckboxes[index] = !contentCheckboxes[index];
+                    print(contentCheckboxes);
+                  });
+                },
               ),
             );
           }),
         )
     );
   }
-
+  // Text("${index + 1}. ")
   Container howToDo(List<String> howToDo){
     return Container(
         height: 250.0,
         child: ListView(
           children: List.generate(howToDo.length, (index) {
+            if(howToDoCheckboxes.length < howToDo.length){
+              howToDoCheckboxes.add(false);
+            }
             return Card(
               child: ListTile(
                 key: UniqueKey(),
-                leading: Text("${index + 1}. "),
+                leading: Checkbox(
+                  tristate: true,
+                  value: howToDoCheckboxes[index],
+                ),
                 title: Container(child: Text(howToDo[index]),),
+                onTap: (){
+                  print(howToDoCheckboxes[index]);
+                  setState(() {
+                    howToDoCheckboxes[index] = !howToDoCheckboxes[index];
+                    print(howToDoCheckboxes);
+                  });
+                },
               ),
             );
           }),
-        )
+        ),
     );
   }
 }
