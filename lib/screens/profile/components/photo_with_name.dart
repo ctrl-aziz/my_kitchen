@@ -86,31 +86,26 @@ class PhotoWithName extends StatelessWidget {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("المستوى: $level"),
-                      Stack(
-                        children: [
-                          Container(
-                            width: 110,
-                            height: 110,
-                            decoration: BoxDecoration(
-                                color: mPrimaryColor,
-                                borderRadius: BorderRadius.circular(550.0),
-                                image: DecorationImage(
-                                    image: NetworkImage(userSnapshot.data!.image!), fit: BoxFit.cover)),
+                      Text("${translate.translate("Level")}: $level"),
+                      Container(
+                        width: 110,
+                        height: 110,
+                        decoration: BoxDecoration(
+                          color: mPrimaryColor,
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: NetworkImage(userSnapshot.data!.image!), fit: BoxFit.cover),
+                        ),
+                        child: CircularPercentIndicator(
+                          radius: 55.0,
+                          lineWidth: 5.0,
+                          percent: progressLevel,
+                          center: const Text(
+                            "",
+                            style: TextStyle(color: Colors.white),
                           ),
-                          Positioned(
-                              top: -2.0,
-                              child: CircularPercentIndicator(
-                                radius: 110.0,
-                                lineWidth: 5.0,
-                                percent: progressLevel,
-                                center: const Text(
-                                  "",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                progressColor: levelColors[level],
-                              )),
-                        ],
+                          progressColor: levelColors[level],
+                        ),
                       ),
                       Text(
                         userSnapshot.data!.name!,

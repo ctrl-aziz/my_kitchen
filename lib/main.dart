@@ -76,7 +76,7 @@ class _MyAppState extends State<MyApp> {
           }
         }
         debugPrint(supportedLocales.toString());
-        return supportedLocales.first;
+        return supportedLocales.last;
       },
       home: StreamProvider<AppUser?>.value(
         initialData: GoogleSignInProvider().appUser,

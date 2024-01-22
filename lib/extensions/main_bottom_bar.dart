@@ -41,7 +41,12 @@ class _CustomizedBottomBarState extends State<CustomizedBottomBar> {
     super.dispose();
   }
 
-  var tabScreen = [const HomeScreen(), const MyKitchenScreen(), const RandomFoodScreen(), const ProfileScreen()];
+  var tabScreen = [
+    const HomeScreen(),
+    const MyKitchenScreen(),
+    const RandomFoodScreen(),
+    const ProfileScreen()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +58,28 @@ class _CustomizedBottomBarState extends State<CustomizedBottomBar> {
       });
     }
     final Size size = MediaQuery.of(context).size;
+    /*
+    print(size.width * 0.087);
+    print((size.width / 4) - 62.5);
+    print(size.width * 0.31);
+    print((size.width / 3) - 7.5);
+    print(size.width * 0.535);
+    print((size.width / 2) + 16);
+    print(size.width * 0.76);
+    print((size.width / 1) - 92.5);
 
-    List<double> position = [50-13, size.width * 0.31, size.width * 0.535, size.width * 0.76];
+      size.width * 0.087,
+      size.width * 0.31,
+      size.width * 0.535,
+      size.width * 0.76
+    */
+
+    List<double> position = [
+      (size.width / 4) - 62.5,
+      (size.width / 3) - 7.5,
+      (size.width / 2) + 16,
+      (size.width / 1) - 92.5
+    ];
 
     return Scaffold(
       body: Stack(
@@ -63,77 +88,82 @@ class _CustomizedBottomBarState extends State<CustomizedBottomBar> {
               valueListenable: _indexNotifier, builder: (_, value, __) => tabScreen[value]),
           // tabScreen[index],
           Positioned(
-              bottom: 0,
-              left: 0,
-              child: SizedBox(
-                width: size.width,
-                height: 80,
-                child: Stack(
-                  children: [
-                    ValueListenableBuilder<int>(
-                      valueListenable: _indexNotifier,
-                      builder: (_, value, __) => CustomPaint(
-                        size: Size(size.width, 80),
-                        painter: MyCustomPainter(value),
-                      ),
+            bottom: 0,
+            left: 0,
+            child: SizedBox(
+              width: size.width,
+              height: 80,
+              child: Stack(
+                children: [
+                  ValueListenableBuilder<int>(
+                    valueListenable: _indexNotifier,
+                    builder: (_, value, __) => CustomPaint(
+                      size: Size(size.width, 80),
+                      painter: MyCustomPainter(value),
                     ),
-                    // CustomPaint(
-                    //   size: Size(size.width, 80),
-                    //   painter: MyCustomPainter(index),
-                    // ),
-                    ValueListenableBuilder<int>(
-                      valueListenable: _indexNotifier,
-                      builder: (_, value, __) => AnimatedPositioned(
-                        duration: const Duration(milliseconds: 300),
-                        right: isLeftToRight ? position.reversed.toList()[value] : position[value],
-                        // TODO Make Bottom bar buttons jumping after 1.5 version update
-                        child: Center(
-                          // heightFactor: 1.4,
-                          child: FloatingActionButton(
-                            backgroundColor: const Color(0xFF424240),
-                            // child: Icon(Icons.home_outlined),
-                            elevation: 0.1,
-                            onPressed: () {},
-                          ),
+                  ),
+                  // CustomPaint(
+                  //   size: Size(size.width, 80),
+                  //   painter: MyCustomPainter(index),
+                  // ),
+                  ValueListenableBuilder<int>(
+                    valueListenable: _indexNotifier,
+                    builder: (_, value, __) => AnimatedPositioned(
+                      duration: const Duration(milliseconds: 300),
+                      right: isLeftToRight ? position.reversed.toList()[value] : position[value],
+                      // TODO Make Bottom bar buttons jumping after 1.5 version update
+                      child: Center(
+                        heightFactor: 1.4,
+                        child: FloatingActionButton(
+                          backgroundColor: const Color(0xFF424240),
+                          // child: Icon(Icons.home_outlined),
+                          elevation: 0.1,
+                          onPressed: () {},
                         ),
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        IconButton(
-                            icon: Image.asset(
-                              customIcons[1],
-                              color: Colors.red,
-                              height: 25.0,
-                            ),
-                            onPressed: () => _onPressed(0)),
-                        IconButton(
-                            icon: Image.asset(
-                              customIcons[2],
-                              color: Colors.red,
-                              height: 25.0,
-                            ),
-                            onPressed: () => _onPressed(1)),
-                        IconButton(
-                            icon: Image.asset(
-                              customIcons[3],
-                              color: Colors.red,
-                              height: 25.0,
-                            ),
-                            onPressed: () => _onPressed(2)),
-                        IconButton(
-                            icon: const Icon(
-                              Icons.person_outline,
-                              color: Colors.red,
-                            ),
-                            onPressed: () => _onPressed(3)),
-                      ],
-                    ),
-                  ],
-                ),
-              ))
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      IconButton(
+                        icon: Image.asset(
+                          customIcons[1],
+                          color: Colors.red,
+                          height: 25.0,
+                        ),
+                        onPressed: () => _onPressed(0),
+                      ),
+                      IconButton(
+                        icon: Image.asset(
+                          customIcons[2],
+                          color: Colors.red,
+                          height: 25.0,
+                        ),
+                        onPressed: () => _onPressed(1),
+                      ),
+                      IconButton(
+                        icon: Image.asset(
+                          customIcons[3],
+                          color: Colors.red,
+                          height: 25.0,
+                        ),
+                        onPressed: () => _onPressed(2),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.person_outline,
+                          color: Colors.red,
+                        ),
+                        onPressed: () => _onPressed(3),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -160,7 +190,6 @@ class MyCustomPainter extends CustomPainter {
     double pos4 = size.width * 0.40;
     double pos5 = size.width * 0.65;
 
-    //print("main Bottom bar $pos2");
 
     Paint paint = Paint()
       ..color = Colors.white
@@ -177,7 +206,7 @@ class MyCustomPainter extends CustomPainter {
     path.lineTo(0, size.height);
 
     path.close();
-    canvas.drawShadow(path, Colors.black, 5, true);
+    // canvas.drawShadow(path, Colors.black, 5, true);
 
     canvas.drawPath(path, paint);
   }

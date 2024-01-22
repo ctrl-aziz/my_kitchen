@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-// import 'package:flutter_spinning_wheel/flutter_spinning_wheel.dart';
 
 import 'package:my_kitchen/extensions/constants.dart';
-// import 'package:my_kitchen/extensions/data.dart';
 import 'package:my_kitchen/localizations/app_localizations.dart';
 import 'package:my_kitchen/models/foods.dart';
 import 'package:my_kitchen/screens/details/details_screen.dart';
 import 'package:my_kitchen/services/database/foods_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:showcaseview/showcaseview.dart';
+
+import '../../extensions/data.dart';
+import 'components/spinning_wheel.dart';
 
 class RandomFoodScreen extends StatefulWidget {
   const RandomFoodScreen({super.key});
@@ -161,7 +162,21 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
                   CustomShowcaseWidget(
                     globalKey: keyOne,
                     description: "أذا كنت محتار شاهد اقتراح لطبختك",
-                    child: const Text("SpinningWheel"),
+                    child: SpinningWheel(
+                      Image.asset(
+                        customIcons[0],
+                        color: mPrimaryColor.withOpacity(0.8),
+                      ),
+                      width: 1,
+                      height: 1,
+                      initialSpinAngle: _generateRandomAngle(),
+                      spinResistance: 0.6,
+                      canInteractWhileSpinning: false,
+                      dividers: foodSnapshot.data!.length,
+                      onUpdate: _dividerController.add,
+                      onEnd: _endController.add,
+                      shouldStartOrStop: _wheelNotifier.stream,
+                    ),
                     /*
                     child: SpinningWheel(
                       Image.asset(
@@ -234,6 +249,9 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
                       ),
                       child: Text(
                         "${translate.translate("Choose your food")}",
+                        style: TextStyle(
+                          color: Colors.black
+                        ),
                       ),
                       onPressed: () {
                         _wheelNotifier.sink.add(_generateRandomVelocity());
@@ -302,7 +320,7 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
 
   double _generateRandomVelocity() => (Random().nextDouble() * 6000) + 2000;
 
-  // double _generateRandomAngle() => Random().nextDouble() * pi * 2;
+  double _generateRandomAngle() => Random().nextDouble() * pi * 2;
 }
 
 class CustomShowcaseWidget extends StatelessWidget {
