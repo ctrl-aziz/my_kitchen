@@ -9,13 +9,14 @@ import 'components/add_new_food.dart';
 class AddFood extends StatelessWidget {
   final position;
 
-  const AddFood({Key key, this.position}) : super(key: key);
+  const AddFood({Key? key, this.position}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: StreamProvider<AppUser>.value(
+      body: StreamProvider<AppUser?>.value(
+          initialData: GoogleSignInProvider().appUser,
           value: GoogleSignInProvider().user,
           child: ShowCaseWidget(
             builder: Builder(builder: (_) => AddNewFood(position: position),),

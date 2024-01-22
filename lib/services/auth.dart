@@ -6,12 +6,22 @@ import 'database/user_database.dart';
 
 class GoogleSignInProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final googleSignIn = GoogleSignIn();
-  bool _isSigningIn;
+  final googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
+  bool _isSigningIn = false;
 
-  GoogleSignInProvider() {
-    _isSigningIn = false;
+
+  static final GoogleSignInProvider _singleton = GoogleSignInProvider._internal();
+
+  factory GoogleSignInProvider() {
+    return _singleton;
   }
+
+  GoogleSignInProvider._internal();
 
   bool get isSigningIn => _isSigningIn;
 
@@ -20,8 +30,10 @@ class GoogleSignInProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  AppUser? get appUser => _userFromFirebaseUser(_auth.currentUser);
 
-  AppUser _userFromFirebaseUser(User user){
+
+  AppUser? _userFromFirebaseUser(User? user){
     if (user != null) {
       return AppUser.uid(uid: user.uid);
     } else {
@@ -29,7 +41,7 @@ class GoogleSignInProvider extends ChangeNotifier {
     }
   }
 
-  Stream<AppUser> get user{
+  Stream<AppUser?> get user{
     return _auth.authStateChanges().map(_userFromFirebaseUser);
   }
 
@@ -65,9 +77,10 @@ class GoogleSignInProvider extends ChangeNotifier {
         idToken: googleAuth.idToken,
       );
 
-      final User user = (await FirebaseAuth.instance.signInWithCredential(credential)).user;
-      print("This is ${user.displayName}");
+      final User? user = (await FirebaseAuth.instance.signInWithCredential(credential)).user;
+      print("This is ${user?.displayName}");
 
+      if(user != null)
       await UserDatabaseService(uid: user.uid).updateUserData(user.displayName.toString(), user.photoURL.toString(), [], [], [], []);
 
 

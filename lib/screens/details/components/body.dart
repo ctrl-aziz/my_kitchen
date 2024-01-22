@@ -7,7 +7,7 @@ import 'package:my_kitchen/services/database/foods_database.dart';
 class Body extends StatefulWidget {
   final position;
 
-  Body({Key key, this.position}) : super(key: key);
+  Body({Key? key, this.position}) : super(key: key);
 
   @override
   _BodyState createState() => _BodyState(position);
@@ -16,8 +16,8 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   final position;
   List<bool> _selected = List.generate(2, (_) => false);
-  List<bool> contentCheckboxes = new List();
-  List<bool> howToDoCheckboxes = new List();
+  List<bool> contentCheckboxes = [];
+  List<bool> howToDoCheckboxes = [];
   _BodyState(this.position);
 
   @override
@@ -28,11 +28,11 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    AppLocalizations translate = AppLocalizations.of(context);
+    AppLocalizations translate = AppLocalizations.of(context)!;
 
     return StreamBuilder<FoodsData>(
       stream: FoodDatabaseService(fid: widget.position).foodData,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot<FoodsData> snapshot) {
         if(!snapshot.hasData) return Container();
         return Column(
           children: [
@@ -75,7 +75,7 @@ class _BodyState extends State<Body> {
                   borderRadius: BorderRadius.all(Radius.circular(9.0)),
                   color: mWhiteColor,
                 ),
-                child: (_selected[0] && !_selected[1]) ? content(snapshot.data.content) : howToDo(snapshot.data.howToDo)
+                child: (_selected[0] && !_selected[1]) ? content(snapshot.data!.content!) : howToDo(snapshot.data!.howToDo!)
             ),
           ],
         );
@@ -97,6 +97,9 @@ class _BodyState extends State<Body> {
               child: ListTile(
                 key: UniqueKey(),
                 leading: Checkbox(
+                  onChanged: (bool? value){
+
+                  },
                   tristate: true,
                   value: contentCheckboxes[index],
                 ),
@@ -127,6 +130,9 @@ class _BodyState extends State<Body> {
               child: ListTile(
                 key: UniqueKey(),
                 leading: Checkbox(
+                  onChanged: (bool? value){
+
+                  },
                   tristate: true,
                   value: howToDoCheckboxes[index],
                 ),

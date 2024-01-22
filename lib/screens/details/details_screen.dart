@@ -8,7 +8,7 @@ import 'components/food_name_with_title.dart';
 class DetailsScreen extends StatelessWidget {
   final position;
 
-  DetailsScreen({Key key,@required this.position}) : super(key: key);
+  DetailsScreen({Key? key,required this.position}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,8 @@ class DetailsScreen extends StatelessWidget {
       appBar: AppBar(
 
       ),
-      body: StreamProvider<AppUser>.value(
+      body: StreamProvider<AppUser?>.value(
+        initialData: GoogleSignInProvider().appUser,
         value: GoogleSignInProvider().user,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

@@ -26,7 +26,7 @@ class _FavoriteWithFollowersState extends State<FavoriteWithFollowers> {
 
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<AppUser>(context);
+    final _user = Provider.of<AppUser?>(context);
     if(_user == null) return Align(alignment: Alignment.center, child: CircularProgressIndicator(),);
     return Container(
       height: 300,
@@ -35,16 +35,16 @@ class _FavoriteWithFollowersState extends State<FavoriteWithFollowers> {
       ),
       child: StreamBuilder<UserData>(
           stream: UserDatabaseService(uid: _user.uid).userData,
-          builder: (context, snapshot) {
+          builder: (context, AsyncSnapshot<UserData> snapshot) {
             if(!snapshot.hasData) return Align(alignment: Alignment.center, child: CircularProgressIndicator(),);
-            List<String> data = snapshot.data.favorites;
+            List<String> data = snapshot.data!.favorites!;
             return GridView.count(
                 crossAxisCount: 3,
-              children: List.generate(snapshot.data.favorites.length, (index) {
+              children: List.generate(snapshot.data!.favorites!.length, (index) {
                 return StreamBuilder<FoodsData>(
                     stream: FoodDatabaseService(fid: data[index]).foodData,
-                    builder: (context, snapshot) {
-                      if(snapshot.hasData && snapshot != null){
+                    builder: (context, AsyncSnapshot<FoodsData> snapshot) {
+                      if(snapshot.hasData && !snapshot.hasError){
                         return GestureDetector(
                           child: Container(
                           width: MediaQuery.of(context).size.width / 3,
@@ -54,7 +54,7 @@ class _FavoriteWithFollowersState extends State<FavoriteWithFollowers> {
                               color: mPrimaryColor,
                               borderRadius: BorderRadius.circular(5.0),
                               image: DecorationImage(
-                                  image: NetworkImage(snapshot.data.image),
+                                  image: NetworkImage(snapshot.data!.image!),
                                   fit: BoxFit.cover
                               )
                           ),
@@ -63,14 +63,12 @@ class _FavoriteWithFollowersState extends State<FavoriteWithFollowers> {
                           )
                             ),
                           onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsScreen(position: snapshot.data.infid)));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsScreen(position: snapshot.data!.infid)));
                           },
                           onDoubleTap: (){
-                            if(_user != null){
-                              FoodDatabaseService(fid: snapshot.data.infid).updateFavoriteFood(target: 'favorite', value: _user.uid);
-                              UserDatabaseService(uid: _user.uid).updateUserDataByOne(target: 'favorites', value: snapshot.data.infid);
-                            }
-                          },
+                            FoodDatabaseService(fid: snapshot.data!.infid).updateFavoriteFood(target: 'favorite', value: _user.uid);
+                            UserDatabaseService(uid: _user.uid).updateUserDataByOne(target: 'favorites', value: snapshot.data!.infid!);
+                                                    },
                         );
                       }else {
                         return Material(

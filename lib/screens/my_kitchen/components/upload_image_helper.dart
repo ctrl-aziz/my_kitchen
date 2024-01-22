@@ -5,9 +5,9 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class UploadImageHelper{
   //firebase_storage.UploadTask _uploadTasks;
-  String imageUrl;
+  String? imageUrl;
 
-  Future<void> uploadFile(io.File file, String folderName, String fileName) async {
+  Future<void> uploadFile(io.File? file, String folderName, String fileName) async {
     if (file == null) {
       print("No file was selected");
       return null;

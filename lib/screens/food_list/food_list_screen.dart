@@ -10,7 +10,7 @@ import 'components/body.dart';
 class FoodListScreen extends StatefulWidget {
   final position;
 
-  FoodListScreen({Key key, this.position}) : super(key: key);
+  FoodListScreen({Key? key, this.position}) : super(key: key);
 
   @override
   _FoodListScreenState createState() => _FoodListScreenState(position);
@@ -20,8 +20,8 @@ int toggle = 0;
 
 class _FoodListScreenState extends State<FoodListScreen> with SingleTickerProviderStateMixin{
   final position;
-  AnimationController _con;
-  TextEditingController _textEditingController;
+  late AnimationController _con;
+  late TextEditingController _textEditingController;
 
   _FoodListScreenState(this.position);
 
@@ -142,7 +142,7 @@ class _FoodListScreenState extends State<FoodListScreen> with SingleTickerProvid
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
                           floatingLabelBehavior: FloatingLabelBehavior.never,
-                          labelText: "    ${AppLocalizations.of(context).translate("Search")} ...",
+                          labelText: "    ${AppLocalizations.of(context)!.translate("Search")} ...",
                           labelStyle: TextStyle(
                             color: Color(0xff5B5B5B),
                             fontSize: 17.0,

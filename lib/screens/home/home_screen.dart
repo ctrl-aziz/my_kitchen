@@ -30,8 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
   upperAppBar () {
     return AppBar(
       title: Center(
-        child: Text(AppLocalizations.of(context).translate("Kitchen list"),
-          style: Theme.of(context).textTheme.headline5.copyWith(color: Colors.white, fontWeight: FontWeight.bold)
+        child: Text(AppLocalizations.of(context)!.translate("Kitchen list")!,
+          style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: Colors.white, fontWeight: FontWeight.bold)
         ),
       ),
     );

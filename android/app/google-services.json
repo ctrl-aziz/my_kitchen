@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "271192488548-0513qt4vjonjtf4c26sv2ceilfckbo7m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mykitchen.my_kitchen",
+            "certificate_hash": "fc42f7b15307250e991d110417645f86b6e3af02"
+          }
+        },
+        {
           "client_id": "271192488548-0afolfe1tclqabup1df6iuhr02k20nog.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -53,6 +61,13 @@
             {
               "client_id": "271192488548-4gvavbk96ol6llr5m94nut50o611mfdv.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "271192488548-15n8tndcif11nmmlqjn2255shaidoaj2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mykitchen.myKitchen"
+              }
             }
           ]
         }

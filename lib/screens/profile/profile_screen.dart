@@ -19,8 +19,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
-    AppLocalizations translate = AppLocalizations.of(context);
-    final _user = Provider.of<AppUser>(context);
+    AppLocalizations translate = AppLocalizations.of(context)!;
+    final _user = Provider.of<AppUser?>(context);
     if (_user == null)
       return Scaffold(
           appBar: AppBar(
@@ -137,9 +137,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Text("${translate.translate("Please login to show content")}", style: Theme
                           .of(context)
                           .textTheme
-                          .subtitle2
+                          .titleSmall!
                           .copyWith(color: Colors.white),),
-                      RaisedButton(
+                      ElevatedButton(
                         child: Text("${translate.translate("Login Now")}"),
                         onPressed: () {
                           GoogleSignInProvider().login();

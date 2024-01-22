@@ -47,7 +47,7 @@ class _CustomizedBottomBarState extends State<CustomizedBottomBar> {
   Widget build(BuildContext context) {
     print("main Bottom bar build widget");
 
-    if (AppLocalizations.of(context).locale.languageCode == "en"){
+    if (AppLocalizations.of(context)!.locale.languageCode == "en"){
       setState(() {
         isLeftToRight = true;
       });
@@ -67,7 +67,7 @@ class _CustomizedBottomBarState extends State<CustomizedBottomBar> {
     return Scaffold(
       body: Stack(
         children: [
-          ValueListenableBuilder(
+          ValueListenableBuilder<int>(
               valueListenable: _indexNotifier,
               builder: (_, value, __) => tabScreen[value]),
           // tabScreen[index],
@@ -79,7 +79,7 @@ class _CustomizedBottomBarState extends State<CustomizedBottomBar> {
                 height: 80,
                 child: Stack(
                   children: [
-                    ValueListenableBuilder(
+                    ValueListenableBuilder<int>(
                     valueListenable: _indexNotifier,
                     builder: (_, value, __) => CustomPaint(
                         size: Size(size.width, 80),
@@ -90,7 +90,7 @@ class _CustomizedBottomBarState extends State<CustomizedBottomBar> {
                     //   size: Size(size.width, 80),
                     //   painter: MyCustomPainter(index),
                     // ),
-                    ValueListenableBuilder(
+                    ValueListenableBuilder<int>(
                       valueListenable: _indexNotifier,
                       builder: (_, value, __) =>
                           AnimatedPositioned(

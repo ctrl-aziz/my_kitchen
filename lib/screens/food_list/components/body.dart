@@ -27,11 +27,11 @@ class _BodyState extends State<Body> {
 
     return StreamBuilder<List<FoodsData>>(
       stream: FoodDatabaseService().allFoods,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot<List<FoodsData>> snapshot) {
         if(snapshot.hasData){
           List<FoodsData> readyList = [];
-          for(var foodList in snapshot.data){
-            for(var countries in foodList.country){
+          for(var foodList in snapshot.data!){
+            for(var countries in foodList.country!){
               if(countryCode[position] == countries){
                 readyList.add(foodList);
               }
@@ -57,7 +57,7 @@ class _BodyState extends State<Body> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(200.0),
                         image: DecorationImage(
-                            image: NetworkImage(readyList[index].image),
+                            image: NetworkImage(readyList[index].image!),
                             fit: BoxFit.cover
                         )
                       ),
@@ -69,7 +69,7 @@ class _BodyState extends State<Body> {
                             color: Color.fromRGBO(255, 100, 100, 0.3),
                             borderRadius: BorderRadius.circular(200.0),
                           ),
-                          child: Text(readyList[index].name, style: Theme.of(context).textTheme.subtitle2.copyWith(color: mWhiteColor, fontWeight: FontWeight.bold), textAlign: TextAlign.center,)
+                          child: Text(readyList[index].name!, style: Theme.of(context).textTheme.titleSmall!.copyWith(color: mWhiteColor, fontWeight: FontWeight.bold), textAlign: TextAlign.center,)
                       ),
                     ),
                     onTap: (){

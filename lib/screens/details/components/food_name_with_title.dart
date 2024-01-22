@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 class FoodNameWithTitle extends StatefulWidget {
   final position;
 
-  FoodNameWithTitle({Key key, this.position}) : super(key: key);
+  FoodNameWithTitle({Key? key, this.position}) : super(key: key);
 
   @override
   _FoodNameWithTitleState createState() => _FoodNameWithTitleState(position: position);
@@ -25,8 +25,8 @@ class _FoodNameWithTitleState extends State<FoodNameWithTitle> {
 
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<AppUser>(context);
-    AppLocalizations translate = AppLocalizations.of(context);
+    final _user = Provider.of<AppUser?>(context);
+    AppLocalizations translate = AppLocalizations.of(context)!;
     TextTheme textTheme = Theme.of(context).textTheme;
     Size size = MediaQuery.of(context).size;
 
@@ -34,7 +34,7 @@ class _FoodNameWithTitleState extends State<FoodNameWithTitle> {
       stream: FoodDatabaseService(fid: widget.position).foodData,
       builder: (context, snapshot) {
         if(!snapshot.hasData) return Align(alignment: Alignment.center,child: CircularProgressIndicator(),);
-        FoodsData _foodsData = snapshot.data;
+        FoodsData _foodsData = snapshot.data!;
 
         return Hero(
           tag: "foodItem${widget.position}",
@@ -54,7 +54,7 @@ class _FoodNameWithTitleState extends State<FoodNameWithTitle> {
                     margin: EdgeInsets.all(0.0),
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: NetworkImage(_foodsData.image),
+                            image: NetworkImage(_foodsData.image!),
                             fit: BoxFit.cover
                         )
                     ),
@@ -80,12 +80,12 @@ class _FoodNameWithTitleState extends State<FoodNameWithTitle> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(_foodsData.name, style: textTheme.headline6.copyWith(color: mWhiteColor, fontWeight: FontWeight.bold),),
+                          Text(_foodsData.name!, style: textTheme.titleLarge!.copyWith(color: mWhiteColor, fontWeight: FontWeight.bold),),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text("${translate.translate("By")} ", style: textTheme.subtitle2.copyWith(color: mWhiteColor),),
-                              Text("${_foodsData.owner}", style: textTheme.subtitle2.copyWith(color: mWhiteColor),),
+                              Text("${translate.translate("By")} ", style: textTheme.titleSmall!.copyWith(color: mWhiteColor),),
+                              Text("${_foodsData.owner}", style: textTheme.titleSmall!.copyWith(color: mWhiteColor),),
                             ],
                           ),
                         ],
@@ -102,36 +102,36 @@ class _FoodNameWithTitleState extends State<FoodNameWithTitle> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("${translate.translate("Like")}", style: textTheme.subtitle1.copyWith(color: mTextColor),),
+                          Text("${translate.translate("Like")}", style: textTheme.titleMedium!.copyWith(color: mTextColor),),
                           Stack(
                             children: [
                               IconButton(
-                                  icon: (_user != null && _foodsData.like.contains(_user.uid)) ? Icon(Icons.favorite) : Icon(Icons.favorite_border_outlined) , color: mPrimaryColor,iconSize: 40.0,
+                                  icon: (_user != null && _foodsData.like!.contains(_user.uid)) ? Icon(Icons.favorite) : Icon(Icons.favorite_border_outlined) , color: mPrimaryColor,iconSize: 40.0,
                                   onPressed: () {
-                                    if(_user == null) Scaffold.of(context).showSnackBar(SnackBar(content: Text("${translate.translate("Please login to add like")}", style: TextStyle(color: Colors.black54), textAlign: TextAlign.center,), duration: Duration(seconds: 1), backgroundColor: Colors.white,));
+                                    if(_user == null) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${translate.translate("Please login to add like")}", style: TextStyle(color: Colors.black54), textAlign: TextAlign.center,), duration: Duration(seconds: 1), backgroundColor: Colors.white,));
                                     if(_user != null){
                                       FoodDatabaseService(fid: position).updateFavoriteFood(target: 'like', value: _user.uid);
                                       UserDatabaseService(uid: _user.uid).updateUserDataByOne(target: 'likes', value: position);
                                     }
                                   }
                               ),
-                              Text("${_foodsData.like.length}", style: textTheme.subtitle1.copyWith(color: mWhiteColor),),
+                              Text("${_foodsData.like!.length}", style: textTheme.titleMedium!.copyWith(color: mWhiteColor),),
                             ],
                           ),
-                          Text("${translate.translate("Favorite")}", style: textTheme.subtitle1.copyWith(color: mTextColor),),
+                          Text("${translate.translate("Favorite")}", style: textTheme.titleMedium!.copyWith(color: mTextColor),),
                           Stack(
                             children: [
                               IconButton(
-                                  icon: (_user != null && _foodsData.favorite.contains(_user.uid)) ? Icon(Icons.star) : Icon(Icons.star_border_outlined), color: mPrimaryColor,iconSize: 40.0,
+                                  icon: (_user != null && _foodsData.favorite!.contains(_user.uid)) ? Icon(Icons.star) : Icon(Icons.star_border_outlined), color: mPrimaryColor,iconSize: 40.0,
                                   onPressed: () {
-                                    if(_user == null) Scaffold.of(context).showSnackBar(SnackBar(content: Text("${translate.translate("Please login to add to favorite")}", style: TextStyle(color: Colors.black54), textAlign: TextAlign.center,), backgroundColor: Colors.white , duration: Duration(seconds: 1),));
+                                    if(_user == null) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${translate.translate("Please login to add to favorite")}", style: TextStyle(color: Colors.black54), textAlign: TextAlign.center,), backgroundColor: Colors.white , duration: Duration(seconds: 1),));
                                     if(_user != null){
                                       FoodDatabaseService(fid: position).updateFavoriteFood(target: 'favorite', value: _user.uid);
                                       UserDatabaseService(uid: _user.uid).updateUserDataByOne(target: 'favorites', value: position);
                                     }
                                   }
                               ),
-                              Text("${_foodsData.favorite.length}", style: textTheme.subtitle1.copyWith(color: mWhiteColor),),
+                              Text("${_foodsData.favorite!.length}", style: textTheme.titleMedium!.copyWith(color: mWhiteColor),),
                             ],
                           ),
                         ],

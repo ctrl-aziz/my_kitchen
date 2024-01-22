@@ -27,7 +27,7 @@ class PhotoWithName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AppUser>(context);
-    AppLocalizations translate = AppLocalizations.of(context);
+    AppLocalizations translate = AppLocalizations.of(context)!;
 
     return StreamBuilder<UserData>(
         stream: UserDatabaseService(uid: user.uid).userData,
@@ -35,19 +35,19 @@ class PhotoWithName extends StatelessWidget {
           if (userSnapshot.hasData) {
             return StreamBuilder<List<FoodsData>>(
                 stream: FoodDatabaseService().allFoods,
-              builder: (context, snapshot) {
+              builder: (context, AsyncSnapshot<List<FoodsData>> snapshot) {
                 if (!snapshot.hasData) return Align(
                   alignment: Alignment.center,
                   child: CircularProgressIndicator(),);
                 int likeCount = 0;
                 double progressLevel = 0.0;
                 int level = 0;
-                snapshot.data.forEach((element) {
+                snapshot.data!.forEach((element) {
                   print(element.infid);
-                  if (userSnapshot.data.foods.contains(element
+                  if (userSnapshot.data!.foods!.contains(element
                       .infid)) {
                     print(element.like);
-                    likeCount += element.like.length;
+                    likeCount += element.like!.length;
                   }
                 });
                 if(likeCount <= 50){
@@ -93,7 +93,7 @@ class PhotoWithName extends StatelessWidget {
                               color: mPrimaryColor,
                               borderRadius: BorderRadius.circular(550.0),
                               image: DecorationImage(
-                                  image: NetworkImage(userSnapshot.data.image),
+                                  image: NetworkImage(userSnapshot.data!.image!),
                                   fit: BoxFit.cover
                               )
                           ),
@@ -111,7 +111,7 @@ class PhotoWithName extends StatelessWidget {
 
                       ],
                     ),
-                    Text(userSnapshot.data.name,),
+                    Text(userSnapshot.data!.name!,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

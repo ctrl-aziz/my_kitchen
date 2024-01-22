@@ -12,7 +12,7 @@ class Body extends StatelessWidget {
     images.forEach((element) {precacheImage(AssetImage(element), context);});
     Size deviceSize = MediaQuery.of(context).size;
     TextTheme textTheme = Theme.of(context).textTheme;
-    AppLocalizations translate = AppLocalizations.of(context);
+    AppLocalizations translate = AppLocalizations.of(context)!;
 
     return ListView.builder(
       physics: ScrollPhysics(),
@@ -50,7 +50,7 @@ class Body extends StatelessWidget {
                     width: deviceSize.width,
                     child: Material(color: Colors.transparent,
                         child: Text('${translate.translate("Kitchen of")} ${translate.translate("${title[index]}")}',
-                            style: textTheme.headline5.apply(color: mWhiteColor),
+                            style: textTheme.headlineSmall!.apply(color: mWhiteColor),
                           textAlign: TextAlign.center,
                         )
                     )

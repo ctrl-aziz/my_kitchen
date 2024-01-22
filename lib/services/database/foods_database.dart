@@ -1,23 +1,28 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_kitchen/models/foods.dart';
 
 class FoodDatabaseService {
-  final String fid;
+  final String? fid;
 
   final CollectionReference foodCollection = FirebaseFirestore.instance.collection("foods");
 
   FoodDatabaseService({this.fid});
 
-  deleteFoodData(String fid) async{
+  deleteFoodData(String fid) async {
     await foodCollection.doc(fid).delete();
   }
 
-  Future updateFoodData(
-      {String infid, String name, String image, String owner, List<
-          String> content, List<String> howToDo, List<String> favorite, List<
-          String> like, List<String> country}) async{
+  Future updateFoodData({
+    required String infid,
+    required String name,
+    required String image,
+    required String owner,
+    required List<String> content,
+    required List<String> howToDo,
+    required List<String> favorite,
+    required List<String> like,
+    required List<String> country,
+  }) async {
     return await foodCollection.doc(fid).set({
       'infid': infid,
       'name': name,
@@ -30,65 +35,61 @@ class FoodDatabaseService {
       'country': country
     });
   }
-  Future updateFavoriteFood({String target, String value}) async{
+
+  Future updateFavoriteFood({required String target, required String value}) async {
     DocumentReference docRef = foodCollection.doc(fid);
     DocumentSnapshot doc = await docRef.get();
-    List docCon = doc.data()[target];
+    List docCon = doc.get(target);
     print(docCon);
     print(docCon.contains(value));
-    if(docCon.contains(value)){
+    if (docCon.contains(value)) {
       return await docRef.update({
         target: FieldValue.arrayRemove([value]),
       });
-    }else{
+    } else {
       return await docRef.update({
         target: FieldValue.arrayUnion([value]),
       });
     }
-
   }
 
-  List<FoodsData> _foodListFromSnapshot(QuerySnapshot snapshot){
-    return snapshot.docs.map((doc){
+  List<FoodsData> _foodListFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.docs.map((doc) {
       return FoodsData(
-        infid: doc.data()['infid'] ?? '',
-        name: doc.data()['name'] ?? '',
-        image: doc.data()['image'] ?? '',
-        owner: doc.data()['owner'],
-        content: List.from(doc.data()['content']) ?? '',
-        howToDo: List.from(doc.data()['howtodo']) ?? '',
-        favorite: List.from(doc.data()['favorite']) ?? '',
-        like: List.from(doc.data()['like']) ?? '',
-        country: List.from(doc.data()['country']),
+        infid: doc.get('infid') ?? '',
+        name: doc.get('name') ?? '',
+        image: doc.get('image') ?? '',
+        owner: doc.get('owner'),
+        content: List.from(doc.get('content')),
+        howToDo: List.from(doc.get('howtodo')),
+        favorite: List.from(doc.get('favorite')),
+        like: List.from(doc.get('like')),
+        country: List.from(doc.get('country')),
       );
     }).toList();
   }
 
-  Stream<List<FoodsData>> get allFoods{
-    return foodCollection.snapshots()
-        .map(_foodListFromSnapshot);
+  Stream<List<FoodsData>> get allFoods {
+    return foodCollection.snapshots().map(_foodListFromSnapshot);
   }
 
-  FoodsData _foodDataFromSnapshot(DocumentSnapshot snapshot){
+  FoodsData _foodDataFromSnapshot(DocumentSnapshot snapshot) {
     // print("vvvv $fid");
     return FoodsData(
-      fid: fid,
-      infid: snapshot.data()['infid'],
-      name: snapshot.data()['name'],
-      image: snapshot.data()['image'],
-      owner: snapshot.data()['owner'],
-      content: List.from(snapshot.data()['content']),
-      howToDo: List.from(snapshot.data()['howtodo']),
-      favorite: List.from(snapshot.data()['favorite']),
-      like: List.from(snapshot.data()['like']),
-      country: List.from(snapshot.data()['country']),
+      fid: fid!,
+      infid: snapshot.get('infid'),
+      name: snapshot.get('name'),
+      image: snapshot.get('image'),
+      owner: snapshot.get('owner'),
+      content: List.from(snapshot.get('content')),
+      howToDo: List.from(snapshot.get('howtodo')),
+      favorite: List.from(snapshot.get('favorite')),
+      like: List.from(snapshot.get('like')),
+      country: List.from(snapshot.get('country')),
     );
   }
 
-
-
-  Stream<FoodsData> get foodData{
+  Stream<FoodsData> get foodData {
     return foodCollection.doc(fid).snapshots().map(_foodDataFromSnapshot);
   }
-
 }

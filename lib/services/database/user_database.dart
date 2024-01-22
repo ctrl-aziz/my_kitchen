@@ -6,7 +6,7 @@ class UserDatabaseService {
 
   final CollectionReference userCollection = FirebaseFirestore.instance.collection("users");
 
-  UserDatabaseService({this.uid});
+  UserDatabaseService({required this.uid});
 
   Future updateUserData(String name, String image, List<String> likes, List<String> foods, List<String> favorites, List<String> followers) async{
     var currentUser = await userCollection.doc(uid).get();
@@ -25,13 +25,13 @@ class UserDatabaseService {
     }
   }
 
-  Future deleteFoodData({String target, String value}) async{
+  Future deleteFoodData({required String target, required String value}) async{
     DocumentReference docRef = userCollection.doc(uid);
     DocumentSnapshot doc = await docRef.get();
     print(target);
     print(value);
     print(uid);
-    List docCon = doc.data()[target];
+    List docCon = doc.get(target);
     print(docCon);
     print(docCon.contains(value));
     if(docCon.contains(value)){
@@ -41,13 +41,13 @@ class UserDatabaseService {
     }
   }
 
-  Future updateUserDataByOne({String target, String value}) async{
+  Future updateUserDataByOne({required String target, required String value}) async{
     DocumentReference docRef = userCollection.doc(uid);
     DocumentSnapshot doc = await docRef.get();
     print(target);
     print(value);
     print(uid);
-    List docCon = doc.data()[target];
+    List docCon = doc.get(target);
     print(docCon);
     print(docCon.contains(value));
     if(target == 'foods'){
@@ -72,12 +72,12 @@ class UserDatabaseService {
   List<UserData> _userListFromSnapshot(QuerySnapshot snapshot){
     return snapshot.docs.map((doc){
       return UserData(
-        name: doc.data()['name'] ?? '',
-        image: doc.data()['image'] ?? '',
-        likes: List.from(doc.data()['likes']) ?? '',
-        foods: List.from(doc.data()['foods']) ?? '',
-        favorites: List.from(doc.data()['favorites']) ?? '',
-        followers: List.from(doc.data()['followers']) ?? '',
+        name: doc.get('name') ?? '',
+        image: doc.get('image') ?? '',
+        likes: List.from(doc.get('likes')),
+        foods: List.from(doc.get('foods')),
+        favorites: List.from(doc.get('favorites')),
+        followers: List.from(doc.get('followers')),
       );
     }).toList();
   }
@@ -90,12 +90,12 @@ class UserDatabaseService {
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot){
     return UserData(
         uid: uid,
-        name: snapshot.data()['name'],
-        image: snapshot.data()['image'],
-        likes: List.from(snapshot.data()['likes']),
-        foods: List.from(snapshot.data()['foods']),
-        favorites: List.from(snapshot.data()['favorites']),
-        followers: List.from(snapshot.data()['followers'])
+        name: snapshot.get('name'),
+        image: snapshot.get('image'),
+        likes: List.from(snapshot.get('likes')),
+        foods: List.from(snapshot.get('foods')),
+        favorites: List.from(snapshot.get('favorites')),
+        followers: List.from(snapshot.get('followers'))
     );
   }
 
