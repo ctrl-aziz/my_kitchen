@@ -15,31 +15,35 @@ import 'add_food.dart';
 import 'components/upload_image_helper.dart';
 
 class MyKitchenScreen extends StatelessWidget {
+  const MyKitchenScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MyKitchenScreenH();
+    return const MyKitchenScreenH();
   }
 }
 
 class MyKitchenScreenH extends StatefulWidget {
+  const MyKitchenScreenH({super.key});
+
   @override
-  _MyKitchenScreenStateH createState() => _MyKitchenScreenStateH();
+  State<MyKitchenScreenH> createState() => _MyKitchenScreenStateH();
 }
 
 class _MyKitchenScreenStateH extends State<MyKitchenScreenH> {
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<AppUser?>(context);
+    final user = Provider.of<AppUser?>(context);
     AppLocalizations translate = AppLocalizations.of(context)!;
 
-    if (_user == null)
+    if (user == null) {
       return Scaffold(
           appBar: AppBar(
             title: Align(
               alignment: Alignment.center,
               child: Text(
                 "${translate.translate("My Kitchen")}",
-                style: TextStyle(fontFamily: "Cairo", fontWeight: FontWeight.bold),
+                style: const TextStyle(fontFamily: "Cairo", fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -49,9 +53,9 @@ class _MyKitchenScreenStateH extends State<MyKitchenScreenH> {
                 itemBuilder: (context, index) {
                   return Card(
                     elevation: 4.0,
-                    margin: EdgeInsets.symmetric(
+                    margin: const EdgeInsets.symmetric(
                         horizontal: mDefaultPadding * 1.5, vertical: mDefaultPadding * 0.25),
-                    child: Container(
+                    child: SizedBox(
                       height: 80.0,
                       child: Row(
                         children: [
@@ -63,14 +67,14 @@ class _MyKitchenScreenStateH extends State<MyKitchenScreenH> {
                                 decoration: BoxDecoration(
                                   color: mPrimaryColor.withOpacity(0.5),
                                 ),
-                                child: Icon(Icons.image),
+                                child: const Icon(Icons.image),
                               ),
                               Container(
                                 color: mPrimaryColor.withOpacity(0.2),
                               )
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 20,
                           ),
                           Column(
@@ -81,11 +85,11 @@ class _MyKitchenScreenStateH extends State<MyKitchenScreenH> {
                                 "اسم الطعام",
                                 style: Theme.of(context).textTheme.titleLarge!.copyWith(),
                               ),
-                              Text(
+                              const Text(
                                 "المطابخ: السوري, العراقي",
                                 style: TextStyle(fontSize: 11.0),
                               ),
-                              Text(
+                              const Text(
                                 "لقد حصل على 5 اعجاب",
                                 style: TextStyle(fontSize: 11.0),
                               ),
@@ -123,107 +127,113 @@ class _MyKitchenScreenStateH extends State<MyKitchenScreenH> {
               ),
             ),
           ]));
+    }
     return Scaffold(
       appBar: AppBar(
           title: Align(
         alignment: Alignment.center,
         child: Text(
           "${translate.translate("My Kitchen")}",
-          style: TextStyle(fontFamily: "Cairo", fontWeight: FontWeight.bold),
+          style: const TextStyle(fontFamily: "Cairo", fontWeight: FontWeight.bold),
         ),
       )),
       body: StreamBuilder<UserData>(
-          stream: UserDatabaseService(uid: _user.uid).userData,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData)
-              return Align(alignment: Alignment.center, child: CircularProgressIndicator());
-            return Stack(
-              children: [
-                Positioned(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: mDefaultPadding * 3, top: mDefaultPadding * 2),
-                    child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        physics: BouncingScrollPhysics(),
-                        itemCount: snapshot.data!.foods!.length,
-                        itemBuilder: (context, index) {
-                          return StreamBuilder<FoodsData>(
-                              stream: FoodDatabaseService(fid: snapshot.data!.foods![index]).foodData,
-                              builder: (context, foodSnapshot) {
-                                if (!foodSnapshot.hasData)
-                                  return Align(
-                                    alignment: Alignment.center,
-                                    child: CircularProgressIndicator(),
-                                  );
-                                String currentKitchens = "";
-                                for (var country in foodSnapshot.data!.country!) {
-                                  if (currentKitchens.split(" ").length <= 2) {
-                                    currentKitchens +=
-                                        translate.translate("${countries[country]}").toString() + ", ";
-                                  } else {
-                                    currentKitchens += ".";
-                                  }
-                                }
-                                return GestureDetector(
-                                  child: ListTile(
-                                    leading: Container(
-                                        width: 80.0,
-                                        height: 80.0,
-                                        decoration: BoxDecoration(
-                                            color: mPrimaryColor.withOpacity(0.5),
-                                            image: DecorationImage(
-                                                image: NetworkImage(foodSnapshot.data!.image!),
-                                                fit: BoxFit.cover)),
-                                        child: Container(
-                                          color: mPrimaryColor.withOpacity(0.2),
-                                        )),
-                                    title: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          foodSnapshot.data!.name!,
-                                          style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          "${translate.translate("Kitchens")}: $currentKitchens",
-                                          style: TextStyle(fontSize: 11.0),
-                                        ),
-                                        Text(
-                                          "${translate.translate("It has")} ${foodSnapshot.data!.like!.length} ${translate.translate("Likes")}",
-                                          style: TextStyle(fontSize: 11.0),
-                                        ),
-                                      ],
-                                    ),
-                                    trailing: IconButton(
-                                      icon: Icon(Icons.clear),
-                                      onPressed: () async {
-                                        _showMyDialog(
-                                            uid: snapshot.data!.uid!,
-                                            fid: foodSnapshot.data!.infid!,
-                                            imagePath: foodSnapshot.data!.image!);
-                                      },
-                                    ),
+        stream: UserDatabaseService(uid: user.uid).userData,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Align(alignment: Alignment.center, child: CircularProgressIndicator());
+          }
+          return Stack(
+            children: [
+              Positioned(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: mDefaultPadding * 3, top: mDefaultPadding * 2),
+                  child: ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: snapshot.data!.foods!.length,
+                    itemBuilder: (context, index) {
+                      return StreamBuilder<FoodsData>(
+                        stream: FoodDatabaseService(fid: snapshot.data!.foods![index]).foodData,
+                        builder: (context, foodSnapshot) {
+                          if (!foodSnapshot.hasData) {
+                            return const Align(
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          String currentKitchens = "";
+                          for (var country in foodSnapshot.data!.country!) {
+                            if (currentKitchens.split(" ").length <= 2) {
+                              currentKitchens += "${translate.translate("${countries[country]}")}, ";
+                            } else {
+                              currentKitchens += ".";
+                            }
+                          }
+                          return GestureDetector(
+                            child: ListTile(
+                              leading: Container(
+                                width: 80.0,
+                                height: 80.0,
+                                decoration: BoxDecoration(
+                                    color: mPrimaryColor.withOpacity(0.5),
+                                    image: DecorationImage(
+                                        image: NetworkImage(foodSnapshot.data!.image!), fit: BoxFit.cover)),
+                                child: Container(
+                                  color: mPrimaryColor.withOpacity(0.2),
+                                ),
+                              ),
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(
+                                    foodSnapshot.data!.name!,
+                                    style: const TextStyle(fontSize: 17.0, fontWeight: FontWeight.bold),
                                   ),
-                                  onLongPress: () {
-                                    setState(() {});
-                                  },
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => AddFood(
-                                                  position: foodSnapshot.data!.fid,
-                                                )));
-                                    print(index);
-                                  },
-                                );
-                              });
-                        }),
+                                  Text(
+                                    "${translate.translate("Kitchens")}: $currentKitchens",
+                                    style: const TextStyle(fontSize: 11.0),
+                                  ),
+                                  Text(
+                                    "${translate.translate("It has")} ${foodSnapshot.data!.like!.length} ${translate.translate("Likes")}",
+                                    style: const TextStyle(fontSize: 11.0),
+                                  ),
+                                ],
+                              ),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.clear),
+                                onPressed: () async {
+                                  _showMyDialog(
+                                      uid: snapshot.data!.uid!,
+                                      fid: foodSnapshot.data!.infid!,
+                                      imagePath: foodSnapshot.data!.image!);
+                                },
+                              ),
+                            ),
+                            onLongPress: () {
+                              setState(() {});
+                            },
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddFood(
+                                    position: foodSnapshot.data!.fid!,
+                                  ),
+                                ),
+                              );
+                              debugPrint(index.toString());
+                            },
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
-                Positioned(
-                    child: InkWell(
+              ),
+              Positioned(
+                child: InkWell(
                   child: Padding(
                     padding: const EdgeInsets.all(mDefaultPadding * 0.4),
                     child: Row(
@@ -234,7 +244,7 @@ class _MyKitchenScreenStateH extends State<MyKitchenScreenH> {
                           "${translate.translate("Add new food")}",
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
-                        Icon(
+                        const Icon(
                           Icons.add,
                           color: mTextColor,
                         ),
@@ -242,13 +252,15 @@ class _MyKitchenScreenStateH extends State<MyKitchenScreenH> {
                     ),
                   ),
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => AddFood()));
-                    print("pressed");
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AddFood()));
+                    debugPrint("pressed");
                   },
-                )),
-              ],
-            );
-          }),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -258,8 +270,8 @@ class _MyKitchenScreenStateH extends State<MyKitchenScreenH> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('تأكيد الحذف'),
-          content: SingleChildScrollView(
+          title: const Text('تأكيد الحذف'),
+          content: const SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 Text('هل أنت متأكد انك تريد حذف الطعام'),
@@ -268,13 +280,13 @@ class _MyKitchenScreenStateH extends State<MyKitchenScreenH> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('لا'),
+              child: const Text('لا'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('نعم'),
+              child: const Text('نعم'),
               onPressed: () {
                 FoodDatabaseService(fid: fid).deleteFoodData(fid);
                 UploadImageHelper().deleteFile(imagePath);

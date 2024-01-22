@@ -1,6 +1,7 @@
 import 'dart:io' as io;
 
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:flutter/cupertino.dart';
 
 
 class UploadImageHelper{
@@ -9,8 +10,8 @@ class UploadImageHelper{
 
   Future<void> uploadFile(io.File? file, String folderName, String fileName) async {
     if (file == null) {
-      print("No file was selected");
-      return null;
+      debugPrint("No file was selected");
+      return;
     }
 
     //firebase_storage.UploadTask uploadTask;
@@ -28,7 +29,7 @@ class UploadImageHelper{
       await ref.putFile(io.File(file.path), metadata);
     var link = await ref.getDownloadURL();
     imageUrl = link;
-    print("this is link $link");
+    debugPrint("this is link $link");
   }
 
   Future<void> deleteFile(String path){

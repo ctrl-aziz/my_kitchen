@@ -6,9 +6,9 @@ import 'components/body.dart';
 import 'components/food_name_with_title.dart';
 
 class DetailsScreen extends StatelessWidget {
-  final position;
+  final String position;
 
-  DetailsScreen({Key? key,required this.position}) : super(key: key);
+  const DetailsScreen({Key? key,required this.position}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

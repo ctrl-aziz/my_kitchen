@@ -5,26 +5,22 @@ import 'package:my_kitchen/screens/details/details_screen.dart';
 import 'package:my_kitchen/services/database/foods_database.dart';
 
 class Body extends StatefulWidget {
-  final position;
-  Body({this.position});
+  final int position;
+  const Body({super.key, required this.position});
 
   @override
-  _BodyState createState() => _BodyState(position: position);
+  State<Body> createState() => _BodyState();
 }
 
 class _BodyState extends State<Body> {
-  final position;
   List<String> countryCode = [
     "eg", "sa", "sy", "lb",
     "jo", "iq", "dz", "ma", "tn",
   ];
 
-  _BodyState({this.position});
 
   @override
   Widget build(BuildContext context) {
-    print(position);
-
     return StreamBuilder<List<FoodsData>>(
       stream: FoodDatabaseService().allFoods,
       builder: (context, AsyncSnapshot<List<FoodsData>> snapshot) {
@@ -32,7 +28,7 @@ class _BodyState extends State<Body> {
           List<FoodsData> readyList = [];
           for(var foodList in snapshot.data!){
             for(var countries in foodList.country!){
-              if(countryCode[position] == countries){
+              if(countryCode[widget.position] == countries){
                 readyList.add(foodList);
               }
             }
@@ -40,7 +36,7 @@ class _BodyState extends State<Body> {
           }
           return GridView.count(
             scrollDirection: Axis.vertical,
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             shrinkWrap: true,
             crossAxisCount: 3,
             children: List.generate(readyList.length, (index) {
@@ -53,7 +49,7 @@ class _BodyState extends State<Body> {
                       width: 100.0,
                       height: 100.0,
                       alignment: Alignment.center,
-                      margin: EdgeInsets.all(10.0),
+                      margin: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(200.0),
                         image: DecorationImage(
@@ -66,14 +62,14 @@ class _BodyState extends State<Body> {
                           height: 100,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: Color.fromRGBO(255, 100, 100, 0.3),
+                            color: const Color.fromRGBO(255, 100, 100, 0.3),
                             borderRadius: BorderRadius.circular(200.0),
                           ),
                           child: Text(readyList[index].name!, style: Theme.of(context).textTheme.titleSmall!.copyWith(color: mWhiteColor, fontWeight: FontWeight.bold), textAlign: TextAlign.center,)
                       ),
                     ),
                     onTap: (){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => DetailsScreen(position: readyList[index].infid)));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => DetailsScreen(position: readyList[index].infid!)));
                     },
                   ),
                 ),

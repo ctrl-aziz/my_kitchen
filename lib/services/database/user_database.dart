@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:my_kitchen/models/user.dart';
 
 class UserDatabaseService {
@@ -11,9 +12,9 @@ class UserDatabaseService {
   Future updateUserData(String name, String image, List<String> likes, List<String> foods, List<String> favorites, List<String> followers) async{
     var currentUser = await userCollection.doc(uid).get();
     if(currentUser.exists){
-      print("is exist");
+      debugPrint("is exist");
     }else{
-      print("is not exist");
+      debugPrint("is not exist");
       return await userCollection.doc(uid).set({
         'name': name,
         'image': image,
@@ -28,12 +29,12 @@ class UserDatabaseService {
   Future deleteFoodData({required String target, required String value}) async{
     DocumentReference docRef = userCollection.doc(uid);
     DocumentSnapshot doc = await docRef.get();
-    print(target);
-    print(value);
-    print(uid);
+    debugPrint(target);
+    debugPrint(value);
+    debugPrint(uid);
     List docCon = doc.get(target);
-    print(docCon);
-    print(docCon.contains(value));
+    debugPrint(docCon.toString());
+    debugPrint(docCon.contains(value).toString());
     if(docCon.contains(value)){
       return await docRef.update({
         target: FieldValue.arrayRemove([value]),
@@ -44,12 +45,12 @@ class UserDatabaseService {
   Future updateUserDataByOne({required String target, required String value}) async{
     DocumentReference docRef = userCollection.doc(uid);
     DocumentSnapshot doc = await docRef.get();
-    print(target);
-    print(value);
-    print(uid);
+    debugPrint(target);
+    debugPrint(value);
+    debugPrint(uid);
     List docCon = doc.get(target);
-    print(docCon);
-    print(docCon.contains(value));
+    debugPrint(docCon.toString());
+    debugPrint(docCon.contains(value).toString());
     if(target == 'foods'){
       if(!docCon.contains(value)){
         return await docRef.update({

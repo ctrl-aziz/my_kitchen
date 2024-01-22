@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class UserTrafficData extends StatelessWidget {
+  const UserTrafficData({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return const Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         SizedBox(width: 35.0,),

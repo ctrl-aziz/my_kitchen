@@ -7,7 +7,7 @@ import 'package:showcaseview/showcaseview.dart';
 import 'components/add_new_food.dart';
 
 class AddFood extends StatelessWidget {
-  final position;
+  final String? position;
 
   const AddFood({Key? key, this.position}) : super(key: key);
 

@@ -5,20 +5,21 @@ import 'package:my_kitchen/models/foods.dart';
 import 'package:my_kitchen/services/database/foods_database.dart';
 
 class Body extends StatefulWidget {
-  final position;
+  final String position;
 
-  Body({Key? key, this.position}) : super(key: key);
+  const Body({
+    Key? key,
+    required this.position,
+  }) : super(key: key);
 
   @override
-  _BodyState createState() => _BodyState(position);
+  State<Body> createState() => _BodyState();
 }
 
 class _BodyState extends State<Body> {
-  final position;
-  List<bool> _selected = List.generate(2, (_) => false);
+  final List<bool> _selected = List.generate(2, (_) => false);
   List<bool> contentCheckboxes = [];
   List<bool> howToDoCheckboxes = [];
-  _BodyState(this.position);
 
   @override
   void initState() {
@@ -31,123 +32,120 @@ class _BodyState extends State<Body> {
     AppLocalizations translate = AppLocalizations.of(context)!;
 
     return StreamBuilder<FoodsData>(
-      stream: FoodDatabaseService(fid: widget.position).foodData,
-      builder: (context, AsyncSnapshot<FoodsData> snapshot) {
-        if(!snapshot.hasData) return Container();
-        return Column(
-          children: [
-            Center(
-              child: ToggleButtons(
-                children: [
-                  Text("${translate.translate("Content")}", style: TextStyle(fontFamily: "Cairo"),),
-                  Text(
-                    "${translate.translate("How To Do")}", style: TextStyle(fontFamily: "Cairo"),),
-                ],
-                isSelected: _selected,
-                borderRadius: BorderRadius.circular(9.0),
-                constraints: BoxConstraints(
-                    minWidth: 150.0,
-                    minHeight: 35.0,
-                    maxHeight: 65.0,
-                    maxWidth: 200.0
+        stream: FoodDatabaseService(fid: widget.position).foodData,
+        builder: (context, AsyncSnapshot<FoodsData> snapshot) {
+          if (!snapshot.hasData) return Container();
+          return Column(
+            children: [
+              Center(
+                child: ToggleButtons(
+                  isSelected: _selected,
+                  borderRadius: BorderRadius.circular(9.0),
+                  constraints: const BoxConstraints(
+                      minWidth: 150.0, minHeight: 35.0, maxHeight: 65.0, maxWidth: 200.0),
+                  onPressed: (value) {
+                    if (value == 0) {
+                      setState(() {
+                        _selected[0] = true;
+                        _selected[1] = false;
+                      });
+                    } else if (value == 1) {
+                      setState(() {
+                        _selected[0] = false;
+                        _selected[1] = true;
+                      });
+                    }
+                    // print(_selected);
+                  },
+                  children: [
+                    Text(
+                      "${translate.translate("Content")}",
+                      style: const TextStyle(fontFamily: "Cairo"),
+                    ),
+                    Text(
+                      "${translate.translate("How To Do")}",
+                      style: const TextStyle(fontFamily: "Cairo"),
+                    ),
+                  ],
                 ),
-                onPressed: (value) {
-                  if (value == 0) {
-                    setState(() {
-                      _selected[0] = true;
-                      _selected[1] = false;
-                    });
-                  } else if (value == 1) {
-                    setState(() {
-                      _selected[0] = false;
-                      _selected[1] = true;
-                    });
-                  }
-                  // print(_selected);
-                },
               ),
-            ),
-            SizedBox(height: 3.0,),
-            Container(
-                width: MediaQuery.of(context).size.width,
-                height: 320,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(9.0)),
-                  color: mWhiteColor,
-                ),
-                child: (_selected[0] && !_selected[1]) ? content(snapshot.data!.content!) : howToDo(snapshot.data!.howToDo!)
-            ),
-          ],
-        );
-      }
-    );
+              const SizedBox(
+                height: 3.0,
+              ),
+              Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 320,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(9.0)),
+                    color: mWhiteColor,
+                  ),
+                  child: (_selected[0] && !_selected[1])
+                      ? content(snapshot.data!.content!)
+                      : howToDo(snapshot.data!.howToDo!)),
+            ],
+          );
+        });
   }
 
-
-  Container content(List<String> content){
-
-    return Container(
+  SizedBox content(List<String> content) {
+    return SizedBox(
         height: 250.0,
         child: ListView(
           children: List.generate(content.length, (index) {
-            if(contentCheckboxes.length < content.length){
+            if (contentCheckboxes.length < content.length) {
               contentCheckboxes.add(false);
             }
             return Card(
               child: ListTile(
                 key: UniqueKey(),
                 leading: Checkbox(
-                  onChanged: (bool? value){
-
-                  },
+                  onChanged: (bool? value) {},
                   tristate: true,
                   value: contentCheckboxes[index],
                 ),
-                title: Container(child: Text(content[index]),),
-                onTap: (){
-                  print(contentCheckboxes[index]);
+                title: Text(content[index]),
+                onTap: () {
+                  debugPrint(contentCheckboxes[index].toString());
                   setState(() {
                     contentCheckboxes[index] = !contentCheckboxes[index];
-                    print(contentCheckboxes);
+                    debugPrint(contentCheckboxes.toString());
                   });
                 },
               ),
             );
           }),
-        )
-    );
+        ));
   }
-  // Text("${index + 1}. ")
-  Container howToDo(List<String> howToDo){
-    return Container(
-        height: 250.0,
-        child: ListView(
-          children: List.generate(howToDo.length, (index) {
-            if(howToDoCheckboxes.length < howToDo.length){
-              howToDoCheckboxes.add(false);
-            }
-            return Card(
-              child: ListTile(
-                key: UniqueKey(),
-                leading: Checkbox(
-                  onChanged: (bool? value){
 
-                  },
-                  tristate: true,
-                  value: howToDoCheckboxes[index],
-                ),
-                title: Container(child: Text(howToDo[index]),),
-                onTap: (){
-                  print(howToDoCheckboxes[index]);
-                  setState(() {
-                    howToDoCheckboxes[index] = !howToDoCheckboxes[index];
-                    print(howToDoCheckboxes);
-                  });
-                },
+  // Text("${index + 1}. ")
+  SizedBox howToDo(List<String> howToDo) {
+    return SizedBox(
+      height: 250.0,
+      child: ListView(
+        children: List.generate(howToDo.length, (index) {
+          if (howToDoCheckboxes.length < howToDo.length) {
+            howToDoCheckboxes.add(false);
+          }
+          return Card(
+            child: ListTile(
+              key: UniqueKey(),
+              leading: Checkbox(
+                onChanged: (bool? value) {},
+                tristate: true,
+                value: howToDoCheckboxes[index],
               ),
-            );
-          }),
-        ),
+              title: Text(howToDo[index]),
+              onTap: () {
+                debugPrint(howToDoCheckboxes[index].toString());
+                setState(() {
+                  howToDoCheckboxes[index] = !howToDoCheckboxes[index];
+                  debugPrint(howToDoCheckboxes.toString());
+                });
+              },
+            ),
+          );
+        }),
+      ),
     );
   }
 }

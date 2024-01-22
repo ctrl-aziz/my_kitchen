@@ -3,8 +3,10 @@ import 'package:my_kitchen/localizations/app_localizations.dart';
 import 'components/body.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 class _HomeScreenState extends State<HomeScreen> {
   final _toggleNotifier = ValueNotifier<int>(0);
@@ -19,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: upperAppBar(),
-      body: Stack(
+      body: const Stack(
         children: [
           Body(),
         ],

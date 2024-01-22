@@ -6,23 +6,25 @@ import 'package:my_kitchen/localizations/app_localizations.dart';
 import 'package:my_kitchen/screens/food_list/food_list_screen.dart';
 
 class Body extends StatelessWidget {
+  const Body({super.key});
+
 
   @override
   Widget build(BuildContext context) {
-    images.forEach((element) {precacheImage(AssetImage(element), context);});
+    for (var element in images) {precacheImage(AssetImage(element), context);}
     Size deviceSize = MediaQuery.of(context).size;
     TextTheme textTheme = Theme.of(context).textTheme;
     AppLocalizations translate = AppLocalizations.of(context)!;
 
     return ListView.builder(
-      physics: ScrollPhysics(),
+      physics: const ScrollPhysics(),
       scrollDirection: Axis.vertical,
       itemCount: images.length,
-      padding: EdgeInsets.all(mDefaultPadding - 4.0),
+      padding: const EdgeInsets.all(mDefaultPadding - 4.0),
       itemBuilder: (context, index) {
         return GestureDetector(
           child: Card(
-            margin: EdgeInsets.symmetric(vertical: mDefaultPadding/2),
+            margin: const EdgeInsets.symmetric(vertical: mDefaultPadding/2),
             elevation: 4.0,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0)),
@@ -37,10 +39,10 @@ class Body extends StatelessWidget {
                           width: deviceSize.width,
                           decoration: BoxDecoration(
                               image: DecorationImage(
-                                  image: AssetImage("${images[index]}"),
+                                  image: AssetImage(images[index]),
                                   fit: BoxFit.cover
                               )
-                          ),child: Container(color: Color.fromRGBO(255, 100, 100, 0.7),),
+                          ),child: Container(color: const Color.fromRGBO(255, 100, 100, 0.7),),
                         )
                     )
                 ),
@@ -49,7 +51,7 @@ class Body extends StatelessWidget {
                     left: -15.0,
                     width: deviceSize.width,
                     child: Material(color: Colors.transparent,
-                        child: Text('${translate.translate("Kitchen of")} ${translate.translate("${title[index]}")}',
+                        child: Text('${translate.translate("Kitchen of")} ${translate.translate(title[index])}',
                             style: textTheme.headlineSmall!.apply(color: mWhiteColor),
                           textAlign: TextAlign.center,
                         )
@@ -60,9 +62,9 @@ class Body extends StatelessWidget {
           ),
           onTap: () {
             Navigator.of(context).push(PageRouteBuilder(
-              settings: RouteSettings(name: '/foodList'),
+              settings: const RouteSettings(name: '/foodList'),
               fullscreenDialog: true,
-              transitionDuration: Duration(milliseconds: 1000),
+              transitionDuration: const Duration(milliseconds: 1000),
               pageBuilder: (BuildContext context,
                   Animation<double> animation,
                   Animation<double> secondaryAnimation) {

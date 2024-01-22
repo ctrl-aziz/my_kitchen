@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:my_kitchen/models/foods.dart';
 
 class FoodDatabaseService {
@@ -40,8 +41,8 @@ class FoodDatabaseService {
     DocumentReference docRef = foodCollection.doc(fid);
     DocumentSnapshot doc = await docRef.get();
     List docCon = doc.get(target);
-    print(docCon);
-    print(docCon.contains(value));
+    debugPrint(docCon.toString());
+    debugPrint(docCon.contains(value).toString());
     if (docCon.contains(value)) {
       return await docRef.update({
         target: FieldValue.arrayRemove([value]),

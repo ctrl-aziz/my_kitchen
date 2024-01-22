@@ -11,21 +11,23 @@ import 'components/favorite_with_followers.dart';
 import 'components/photo_with_name.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     AppLocalizations translate = AppLocalizations.of(context)!;
-    final _user = Provider.of<AppUser?>(context);
-    if (_user == null)
+    final user = Provider.of<AppUser?>(context);
+    if (user == null) {
       return Scaffold(
           appBar: AppBar(
             title: Center(widthFactor: 2.2,
-                child: Text("${translate.translate("Profile")}", style: TextStyle(
+                child: Text("${translate.translate("Profile")}", style: const TextStyle(
                     fontFamily: "Cairo", fontWeight: FontWeight.bold))),
           ),
           body: Stack(
@@ -40,6 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Hero(
+                          tag: "userImage",
                           child: Container(
                             width: 110,
                             height: 110,
@@ -48,38 +51,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               borderRadius: BorderRadius.circular(50.0),
                             ),
                           ),
-                          tag: "userImage",
                         ),
-                        Text("الأسم",),
+                        const Text("الأسم",),
                       ],
                     ),
                     Column(
                       children: [
                         Center(
                           child: ToggleButtons(
-                            children: [
-                              Text("المفضلة",
-                                style: TextStyle(fontFamily: "Cairo"),),
-                              Text(
-                                "المتابعين",
-                                style: TextStyle(fontFamily: "Cairo"),),
-                            ],
-                            isSelected: [true, false],
+                            isSelected: const [true, false],
                             borderRadius: BorderRadius.circular(9.0),
-                            constraints: BoxConstraints(
+                            constraints: const BoxConstraints(
                                 minWidth: 135.0,
                                 minHeight: 35.0,
                                 maxHeight: 65.0,
                                 maxWidth: 200.0
                             ),
                             onPressed: (value) {},
+                            children: const [
+                              Text("المفضلة",
+                                style: TextStyle(fontFamily: "Cairo"),),
+                              Text(
+                                "المتابعين",
+                                style: TextStyle(fontFamily: "Cairo"),),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 3.0,),
+                        const SizedBox(height: 3.0,),
                         Container(
                             width: 274,
                             height: 320,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               borderRadius: BorderRadius.all(
                                   Radius.circular(9.0)),
                               color: Colors.white,
@@ -88,10 +90,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               itemCount: 5,
                                 itemBuilder: (context, index) {
                                   return ListTile(
-                                    title: Text(
+                                    title: const Text(
                                       "الاسم",
                                       style: TextStyle(fontFamily: "Cairo"),),
-                                    subtitle: Text("عدد الوصفات 5",
+                                    subtitle: const Text("عدد الوصفات 5",
                                       style: TextStyle(fontFamily: "Cairo"),),
                                     leading: Container(
                                       width: 60,
@@ -101,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           borderRadius: BorderRadius.circular(
                                               200.0),
                                       ),
-                                      child: Icon(Icons.image),
+                                      child: const Icon(Icons.image),
                                     ),
                                     hoverColor: Colors.blue,
                                     autofocus: true,
@@ -152,14 +154,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ]
           )
       );
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: Center(widthFactor: 2.2,
-            child: Text("${translate.translate("Profile")}", style: TextStyle(
+            child: Text("${translate.translate("Profile")}", style: const TextStyle(
                 fontFamily: "Cairo", fontWeight: FontWeight.bold))),
         actions: [
-          IconButton(icon: Icon(Icons.power_settings_new), onPressed: (){
+          IconButton(icon: const Icon(Icons.power_settings_new), onPressed: (){
             GoogleSignInProvider().logout();
           },)
         ],
@@ -168,15 +171,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           PhotoWithName(),
           //UserTrafficData(),
-          SizedBox(height: 10.0,),
+          const SizedBox(height: 10.0,),
           Container(
               width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(topRight: Radius.circular(20.0), topLeft: Radius.circular(20.0))
               ),
-              child: Text("${translate.translate("Favorites")}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),)),
-          FavoriteWithFollowers(),
+              child: Text("${translate.translate("Favorites")}", textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold),)),
+          const FavoriteWithFollowers(),
         ],
       ),
     );

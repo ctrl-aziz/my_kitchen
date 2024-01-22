@@ -13,8 +13,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class RandomFoodScreen extends StatefulWidget {
+  const RandomFoodScreen({super.key});
+
   @override
-  _RandomFoodScreenState createState() => _RandomFoodScreenState();
+  State<RandomFoodScreen> createState() => _RandomFoodScreenState();
 }
 
 class _RandomFoodScreenState extends State<RandomFoodScreen> {
@@ -33,63 +35,65 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
   final List<int> foodLikes = [];
 
   Future<Widget> _fetchEntry(int index, String fid) async {
-    await Future.delayed(Duration(milliseconds: 500));
-    AppLocalizations translate = AppLocalizations.of(context)!;
-    TextTheme textTheme = Theme.of(context).textTheme;
+    return Future.delayed(const Duration(milliseconds: 500), (){
+      AppLocalizations translate = AppLocalizations.of(context)!;
+      TextTheme textTheme = Theme.of(context).textTheme;
 
-    return GestureDetector(
-      child: Card(
-        elevation: 4.0,
-        margin: EdgeInsets.symmetric(horizontal: 30.0, vertical: 5.0),
-        child: Container(
-          height: 80.0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                width: 80.0,
-                height: 80.0,
-                decoration: BoxDecoration(
-                  color: mPrimaryColor.withOpacity(0.3),
-                  image: DecorationImage(
-                      image: NetworkImage(foodImages.reversed.toList()[index]), fit: BoxFit.cover),
-                ),
-                child: Container(
-                  color: mPrimaryColor.withOpacity(0.3),
-                ),
-              ),
-              SizedBox(
-                width: 10.0,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${foodNames.reversed.toList()[index]}',
-                    style:
-                        textTheme.titleMedium!.copyWith(color: Colors.black54, fontWeight: FontWeight.bold),
+      return GestureDetector(
+        child: Card(
+          elevation: 4.0,
+          margin: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 5.0),
+          child: SizedBox(
+            height: 80.0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  width: 80.0,
+                  height: 80.0,
+                  decoration: BoxDecoration(
+                    color: mPrimaryColor.withOpacity(0.3),
+                    image: DecorationImage(
+                        image: NetworkImage(foodImages.reversed.toList()[index]), fit: BoxFit.cover),
                   ),
-                  Text("${foodLikes.reversed.toList()[index]}${translate.translate("Likes")}",
-                      style: textTheme.titleSmall!.copyWith(color: Colors.black45)),
-                ],
-              ),
-            ],
+                  child: Container(
+                    color: mPrimaryColor.withOpacity(0.3),
+                  ),
+                ),
+                const SizedBox(
+                  width: 10.0,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      foodNames.reversed.toList()[index],
+                      style:
+                      textTheme.titleMedium!.copyWith(color: Colors.black54, fontWeight: FontWeight.bold),
+                    ),
+                    Text("${foodLikes.reversed.toList()[index]}${translate.translate("Likes")}",
+                        style: textTheme.titleSmall!.copyWith(color: Colors.black45)),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-      onTap: () {
-        print(fid);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => DetailsScreen(
-                      position: fid,
-                    )));
-      },
-    );
+        onTap: () {
+          debugPrint(fid);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => DetailsScreen(
+                    position: fid,
+                  )));
+        },
+      );
+    });
   }
 
+  @override
   dispose() {
     super.dispose();
     _dividerController.close();
@@ -99,21 +103,21 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
 
   Future checkFirstSeen() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool _seen = (prefs.getBool('rand_tut') ?? false);
+    bool seen = (prefs.getBool('rand_tut') ?? false);
 
-    if (_seen) {
-      print("Not First Time");
+    if (seen) {
+      debugPrint("Not First Time");
     } else {
       prefs.setBool('rand_tut', true);
       WidgetsBinding.instance
           .addPostFrameCallback((_) => ShowCaseWidget.of(context).startShowCase([keyOne, keyTow, keyThree]));
-      print("First Time User");
+      debugPrint("First Time User");
     }
   }
 
   @override
   void initState() {
-    new Timer(new Duration(milliseconds: 200), () {
+    Timer(const Duration(milliseconds: 200), () {
       checkFirstSeen();
     });
 
@@ -130,7 +134,7 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
           globalKey: keyThree,
           description: "اذا لم تعجبك الاقتراحات احذفها",
           child: IconButton(
-            icon: Icon(Icons.cleaning_services_rounded),
+            icon: const Icon(Icons.cleaning_services_rounded),
             onPressed: () {
               setState(() {
                 foodNames.clear();
@@ -142,13 +146,14 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
         title: Center(
             widthFactor: 1.7,
             child: Text("${translate.translate("Random food")}",
-                style: TextStyle(fontFamily: "Cairo", fontWeight: FontWeight.bold))),
+                style: const TextStyle(fontFamily: "Cairo", fontWeight: FontWeight.bold))),
       ),
       body: StreamBuilder<List<FoodsData>>(
           stream: FoodDatabaseService().allFoods,
           builder: (context, foodSnapshot) {
-            if (!foodSnapshot.hasData)
-              return Align(alignment: Alignment.center, child: CircularProgressIndicator());
+            if (!foodSnapshot.hasData) {
+              return const Align(alignment: Alignment.center, child: CircularProgressIndicator());
+            }
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -156,7 +161,7 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
                   CustomShowcaseWidget(
                     globalKey: keyOne,
                     description: "أذا كنت محتار شاهد اقتراح لطبختك",
-                    child: Text("SpinningWheel"),
+                    child: const Text("SpinningWheel"),
                     /*
                     child: SpinningWheel(
                       Image.asset(
@@ -175,7 +180,7 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
                     ),
                     */
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 5.0,
                   ),
                   StreamBuilder(
@@ -220,14 +225,14 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
                   CustomShowcaseWidget(
                     globalKey: keyTow,
                     description: 'اضغط هنا للحصول على اقتراحات لطبختك',
-                    child: new ElevatedButton(
+                    child: ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        animationDuration: Duration(milliseconds: 500),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        animationDuration: const Duration(milliseconds: 500),
                         shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))),
-                        elevation: MaterialStatePropertyAll(4.0),
+                        elevation: const MaterialStatePropertyAll(4.0),
                       ),
-                      child: new Text(
+                      child: Text(
                         "${translate.translate("Choose your food")}",
                       ),
                       onPressed: () {
@@ -243,7 +248,7 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
                         builder: (context, AsyncSnapshot<int> snapshot) {
                           if (snapshot.hasData) {
                             int foodPosition = snapshot.data! - 1;
-                            print("data ${snapshot.data}");
+                            debugPrint("data ${snapshot.data}");
                             if (!foodNames.contains(foodSnapshot.data![foodPosition].name)) {
                               foodImages.add(foodSnapshot.data![foodPosition].image!);
                               foodNames.add(foodSnapshot.data![foodPosition].name!);
@@ -256,13 +261,13 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
                                 itemCount: foodImages.length,
                                 itemBuilder: (context, index) {
                                   return FutureBuilder(
-                                      future: this._fetchEntry(index, foodIds.reversed.toList()[index]),
+                                      future: _fetchEntry(index, foodIds.reversed.toList()[index]),
                                       // ignore: missing_return
                                       builder: (context, AsyncSnapshot<Widget> snapshot) {
                                         switch (snapshot.connectionState) {
                                           case ConnectionState.none:
                                           case ConnectionState.waiting:
-                                            return Align(
+                                            return const Align(
                                                 alignment: Alignment.center,
                                                 child: CircularProgressIndicator());
                                           case ConnectionState.done:
@@ -274,7 +279,7 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
                                               return GestureDetector(
                                                 child: dataFromSnapshot,
                                                 onTap: () {
-                                                  print(index);
+                                                  debugPrint(index.toString());
                                                 },
                                               );
                                             }
@@ -283,8 +288,9 @@ class _RandomFoodScreenState extends State<RandomFoodScreen> {
                                 },
                               ),
                             );
-                          } else
+                          } else {
                             return Container();
+                          }
                         }),
                   ),
                 ],
@@ -304,7 +310,7 @@ class CustomShowcaseWidget extends StatelessWidget {
   final String description;
   final GlobalKey globalKey;
 
-  const CustomShowcaseWidget({
+  const CustomShowcaseWidget({super.key,
     required this.description,
     required this.globalKey,
     required this.child,
@@ -313,7 +319,7 @@ class CustomShowcaseWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Showcase(
         key: globalKey,
-        child: child,
         description: description,
+        child: child,
       );
 }

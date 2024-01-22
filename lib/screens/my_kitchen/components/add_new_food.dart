@@ -20,16 +20,16 @@ import 'package:uuid/uuid.dart';
 import 'upload_image_helper.dart';
 
 class AddNewFood extends StatefulWidget {
-  final position;
+  final String? position;
 
   const AddNewFood({Key? key, this.position}) : super(key: key);
 
   @override
-  _AddNewFoodState createState() => _AddNewFoodState(this.position);
+  State<AddNewFood> createState() => _AddNewFoodState();
 }
 
-class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
-  final position;
+class _AddNewFoodState extends State<AddNewFood> {
+  final UploadImageHelper _uploadImageHelper = UploadImageHelper();
   final keyOne = GlobalKey();
   final keyTow = GlobalKey();
   final keyThree = GlobalKey();
@@ -46,31 +46,29 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
   List<String> favorite = [];
   List<String> like = [];
 
-  List<TextEditingController> _contentControllers = [];
-  List<TextEditingController> _howToDoControllers = [];
+  final List<TextEditingController> _contentControllers = [];
+  final List<TextEditingController> _howToDoControllers = [];
   final _foodNameController = TextEditingController();
 
-  List<bool> _contentSwitchEdit = [];
-  List<bool> _howToDoSwitchEdit = [];
+  final List<bool> _contentSwitchEdit = [];
+  final List<bool> _howToDoSwitchEdit = [];
 
-  List<bool> _selected = List.generate(2, (_) => false);
+  final List<bool> _selected = List.generate(2, (_) => false);
 
-  var uuid = Uuid();
+  var uuid = const Uuid();
 
-  late var fid;
+  late String fid;
 
   DateTime? currentBackPressTime;
 
   late FocusNode myFocusNode;
 
-  _AddNewFoodState(this.position);
-
   Future checkFirstSeen() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool _seen = (prefs.getBool('Add_tut') ?? false);
+    bool seen = (prefs.getBool('Add_tut') ?? false);
 
-    if (_seen) {
-      print("Not First Time");
+    if (seen) {
+      debugPrint("Not First Time");
     } else {
       prefs.setBool('Add_tut', true);
       WidgetsBinding.instance.addPostFrameCallback((_) => ShowCaseWidget.of(context).startShowCase([
@@ -79,13 +77,13 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
             keyThree,
             keyFour,
           ]));
-      print("First Time User");
+      debugPrint("First Time User");
     }
   }
 
   @override
   void initState() {
-    new Timer(new Duration(milliseconds: 200), () {
+    Timer(const Duration(milliseconds: 200), () {
       checkFirstSeen();
     });
     _selected[0] = true;
@@ -96,50 +94,51 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
 
   @override
   void dispose() {
-    _contentControllers.forEach((element) {
+    for (var element in _contentControllers) {
       element.dispose();
-    });
-    _howToDoControllers.forEach((element) {
+    }
+    for (var element in _howToDoControllers) {
       element.dispose();
-    });
+    }
     myFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<AppUser?>(context);
+    final user = Provider.of<AppUser?>(context);
 
     AppLocalizations translate = AppLocalizations.of(context)!;
     TextTheme textTheme = Theme.of(context).textTheme;
     Size size = MediaQuery.of(context).size;
 
-    if (_user == null) return Align(alignment: Alignment.center, child: CircularProgressIndicator());
-    print(_user.uid);
-    print(like);
-    print(favorite);
-    print("uniqueKey $fid");
+    if (user == null) return const Align(alignment: Alignment.center, child: CircularProgressIndicator());
+    debugPrint(user.uid);
+    debugPrint(like.toString());
+    debugPrint(favorite.toString());
+    debugPrint("uniqueKey $fid");
     return PopScope(
       canPop: onWillPop(),
       child: SingleChildScrollView(
         child: StreamBuilder<UserData>(
-            stream: UserDatabaseService(uid: _user.uid).userData,
+            stream: UserDatabaseService(uid: user.uid).userData,
             builder: (context, AsyncSnapshot<UserData> userSnapshot) {
-              if (!userSnapshot.hasData)
-                return Material(
+              if (!userSnapshot.hasData) {
+                return const Material(
                   child: Center(
                     child: CircularProgressIndicator(),
                   ),
                 );
+              }
               return StreamBuilder<FoodsData>(
-                  stream: FoodDatabaseService(fid: position).foodData,
+                  stream: FoodDatabaseService(fid: widget.position).foodData,
                   builder: (context, foodSnapshot) {
                     if (foodSnapshot.hasData) {
-                      fid = foodSnapshot.data!.infid;
+                      fid = foodSnapshot.data!.infid!;
                       _networkImage = NetworkImage(foodSnapshot.data!.image!);
                       _foodNameController.text = foodSnapshot.data!.name!;
-                      imageUrl = foodSnapshot.data!.image;
-                      print("Key ${like.isEmpty}");
+                      _uploadImageHelper.imageUrl = foodSnapshot.data!.image;
+                      debugPrint("Key ${like.isEmpty}");
                       if (contentList.isEmpty) {
                         contentList.addAll(foodSnapshot.data!.content!);
                       }
@@ -162,131 +161,130 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                         CustomShowcaseWidget(
                           globalKey: keyOne,
                           description: "أختر صورة لطبختك",
-                          child: Container(
-                            child: Stack(
-                              children: [
-                                InkWell(
-                                  child: _selectedFile == null
-                                      ? (_networkImage == null
-                                          ? Container(
-                                              width: size.width,
-                                              height: 150,
-                                              child: Center(
-                                                  heightFactor: 2.0,
-                                                  child: Container(
-                                                      child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.image,
-                                                        size: 75.0,
-                                                      ),
-                                                      Text(
-                                                        "${translate.translate("Choose image")}",
-                                                        style: Theme.of(context).textTheme.titleMedium,
-                                                      )
-                                                    ],
-                                                  ))),
-                                            )
-                                          : Container(
-                                              width: size.width,
-                                              height: 200,
-                                              alignment: Alignment.center,
-                                              margin: EdgeInsets.all(0.0),
-                                              decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                      image: _networkImage!, fit: BoxFit.cover)),
-                                              child: Container(
-                                                  width: size.width,
-                                                  height: 200,
-                                                  alignment: Alignment.center,
-                                                  decoration: BoxDecoration(
-                                                    color: mBrownColor,
-                                                  ),
-                                                  child: Text("")),
-                                            ))
-                                      : Container(
-                                          width: size.width,
-                                          height: 200,
-                                          alignment: Alignment.center,
-                                          margin: EdgeInsets.all(0.0),
-                                          decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                  image: FileImage(_selectedFile!), fit: BoxFit.cover)),
-                                          child: Container(
-                                              width: size.width,
-                                              height: 200,
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                color: mBrownColor,
-                                              ),
-                                              child: Text("")),
-                                        ),
-                                  onTap: () {
-                                    _chooseCameraOrGallery(context);
-                                  },
-                                ),
-                                (_selectedFile != null || _networkImage != null)
-                                    ? Positioned(
-                                        right: size.width / 7,
-                                        left: size.width / 5,
-                                        top: 30.0,
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          width: size.width * .6,
-                                          padding: EdgeInsets.only(right: mDefaultPadding / 3),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              TextField(
-                                                controller: _foodNameController,
-                                                autofocus: true,
-                                                decoration: InputDecoration(
-                                                  border: InputBorder.none,
-                                                  hintText: '${translate.translate("Food Name")}',
-                                                  hintStyle: Theme.of(context)
-                                                      .textTheme
-                                                      .headlineSmall!
-                                                      .copyWith(
-                                                          color: mWhiteColor, fontWeight: FontWeight.bold),
+                          child: Stack(
+                            children: [
+                              InkWell(
+                                child: _selectedFile == null
+                                    ? (_networkImage == null
+                                        ? SizedBox(
+                                            width: size.width,
+                                            height: 150,
+                                            child: Center(
+                                                heightFactor: 2.0,
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    const Icon(
+                                                      Icons.image,
+                                                      size: 75.0,
+                                                    ),
+                                                    Text(
+                                                      "${translate.translate("Choose image")}",
+                                                      style: Theme.of(context).textTheme.titleMedium,
+                                                    )
+                                                  ],
+                                                )),
+                                          )
+                                        : Container(
+                                            width: size.width,
+                                            height: 200,
+                                            alignment: Alignment.center,
+                                            margin: const EdgeInsets.all(0.0),
+                                            decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                    image: _networkImage!, fit: BoxFit.cover)),
+                                            child: Container(
+                                                width: size.width,
+                                                height: 200,
+                                                alignment: Alignment.center,
+                                                decoration: const BoxDecoration(
+                                                  color: mBrownColor,
                                                 ),
-                                                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                                    color: mWhiteColor, fontWeight: FontWeight.bold),
-                                                textAlign: TextAlign.center,
-                                                onChanged: (value) {},
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    "${translate.translate("By")} ",
-                                                    style: textTheme.titleSmall!.copyWith(color: mWhiteColor),
-                                                  ),
-                                                  Text(
-                                                    "${userSnapshot.data!.name}",
-                                                    style: textTheme.titleSmall!.copyWith(color: mWhiteColor),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    : Container(),
-                                (_inProcess)
-                                    ? Center(
+                                                child: const Text("")),
+                                          ))
+                                    : Container(
+                                        width: size.width,
+                                        height: 200,
+                                        alignment: Alignment.center,
+                                        margin: const EdgeInsets.all(0.0),
+                                        decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                                image: FileImage(_selectedFile!), fit: BoxFit.cover)),
                                         child: Container(
-                                          color: mWhiteColor,
-                                          height: size.height * 0.87,
-                                          child: Center(
-                                            child: CircularProgressIndicator(),
-                                          ),
+                                            width: size.width,
+                                            height: 200,
+                                            alignment: Alignment.center,
+                                            decoration: const BoxDecoration(
+                                              color: mBrownColor,
+                                            ),
+                                            child: const Text("")),
+                                      ),
+                                onTap: () {
+                                  _chooseCameraOrGallery(context);
+                                },
+                              ),
+                              (_selectedFile != null || _networkImage != null)
+                                  ? Positioned(
+                                      right: size.width / 7,
+                                      left: size.width / 5,
+                                      top: 30.0,
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        width: size.width * .6,
+                                        padding: const EdgeInsets.only(right: mDefaultPadding / 3),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            TextField(
+                                              controller: _foodNameController,
+                                              autofocus: true,
+                                              decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                                hintText: '${translate.translate("Food Name")}',
+                                                hintStyle: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineSmall!
+                                                    .copyWith(
+                                                        color: mWhiteColor, fontWeight: FontWeight.bold),
+                                              ),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineSmall!
+                                                  .copyWith(color: mWhiteColor, fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.center,
+                                              onChanged: (value) {},
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  "${translate.translate("By")} ",
+                                                  style: textTheme.titleSmall!.copyWith(color: mWhiteColor),
+                                                ),
+                                                Text(
+                                                  "${userSnapshot.data!.name}",
+                                                  style: textTheme.titleSmall!.copyWith(color: mWhiteColor),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                      )
-                                    : Center()
-                              ],
-                            ),
+                                      ),
+                                    )
+                                  : Container(),
+                              (_inProcess)
+                                  ? Center(
+                                      child: Container(
+                                        color: mWhiteColor,
+                                        height: size.height * 0.87,
+                                        child: const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      ),
+                                    )
+                                  : const Center()
+                            ],
                           ),
                         ),
 
@@ -302,20 +300,20 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                               CustomShowcaseWidget(
                                 globalKey: keyTow,
                                 description: "أختر البلد المتواجد فيها هذه الطبخة",
-                                child: Container(
+                                child: SizedBox(
                                     height: 100.0,
                                     child: Column(
                                       children: [
                                         Container(
+                                          alignment: Alignment.centerRight,
+                                          padding:
+                                              const EdgeInsets.symmetric(horizontal: mDefaultPadding * 0.75),
                                           child: Text(
                                             "${translate.translate("Choose food's countries")}",
                                             style: Theme.of(context).textTheme.titleLarge,
                                           ),
-                                          alignment: Alignment.centerRight,
-                                          padding:
-                                              const EdgeInsets.symmetric(horizontal: mDefaultPadding * 0.75),
                                         ),
-                                        Container(
+                                        SizedBox(
                                           height: 50.0,
                                           child: ListView.builder(
                                               itemCount: title.length,
@@ -326,7 +324,6 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                                                       horizontal: mDefaultPadding * 0.25,
                                                       vertical: mDefaultPadding * 0.25),
                                                   child: ElevatedButton(
-                                                    child: Text(translate.translate("${title[index]}")!),
                                                     style: ButtonStyle(
                                                       backgroundColor: MaterialStatePropertyAll(
                                                           (countryList.contains(reCountries[title[index]]))
@@ -341,13 +338,14 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                                                           countryList.add(reCountries[title[index]]!);
                                                         });
                                                       } else {
-                                                        print(index);
-                                                        print(countryList);
+                                                        debugPrint(index.toString());
+                                                        debugPrint(countryList.toString());
                                                         setState(() {
                                                           countryList.remove(reCountries[title[index]]);
                                                         });
                                                       }
                                                     },
+                                                    child: Text(translate.translate(title[index])!),
                                                   ),
                                                 );
                                               }),
@@ -360,19 +358,9 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                               /// Fill howToDo list
                               Center(
                                 child: ToggleButtons(
-                                  children: [
-                                    Text(
-                                      "${translate.translate("Content")}",
-                                      style: TextStyle(fontFamily: "Cairo"),
-                                    ),
-                                    Text(
-                                      "${translate.translate("How To Do")}",
-                                      style: TextStyle(fontFamily: "Cairo"),
-                                    ),
-                                  ],
                                   isSelected: _selected,
                                   borderRadius: BorderRadius.circular(9.0),
-                                  constraints: BoxConstraints(
+                                  constraints: const BoxConstraints(
                                       minWidth: 150.0, minHeight: 35.0, maxHeight: 65.0, maxWidth: 200.0),
                                   onPressed: (value) {
                                     if (value == 0) {
@@ -394,9 +382,19 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                                     }
                                     // print(_selected);
                                   },
+                                  children: [
+                                    Text(
+                                      "${translate.translate("Content")}",
+                                      style: const TextStyle(fontFamily: "Cairo"),
+                                    ),
+                                    Text(
+                                      "${translate.translate("How To Do")}",
+                                      style: const TextStyle(fontFamily: "Cairo"),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 3.0,
                               ),
                               CustomShowcaseWidget(
@@ -405,7 +403,7 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                                 child: Container(
                                     width: size.width,
                                     height: 320,
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       borderRadius: BorderRadius.all(Radius.circular(9.0)),
                                       color: mWhiteColor,
                                     ),
@@ -413,7 +411,7 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                                         ? content(translate)
                                         : howToDo(translate)),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10.0,
                               ),
 
@@ -424,14 +422,14 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                                 description: "عند الانتهاء شارك طبختك لكي يعرف عنها الجميع",
                                 child: ElevatedButton(
                                     style: ButtonStyle(
-                                      backgroundColor: MaterialStatePropertyAll(mPrimaryColor),
+                                      backgroundColor: const MaterialStatePropertyAll(mPrimaryColor),
                                       overlayColor: MaterialStatePropertyAll(mPrimaryColor.withOpacity(0.5)),
                                       surfaceTintColor:
                                           MaterialStatePropertyAll(mPrimaryColor.withOpacity(0.5)),
                                       shape: MaterialStatePropertyAll(RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(18.0),
-                                          side: BorderSide(color: mPrimaryColor))),
-                                      padding: MaterialStatePropertyAll(EdgeInsets.symmetric(
+                                          side: const BorderSide(color: mPrimaryColor))),
+                                      padding: const MaterialStatePropertyAll(EdgeInsets.symmetric(
                                           horizontal: mDefaultPadding * 5, vertical: 1.0)),
                                     ),
                                     child: Text(
@@ -441,9 +439,9 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                                           .headlineSmall!
                                           .copyWith(color: mWhiteColor, fontWeight: FontWeight.bold),
                                     ),
-                                    onPressed: () async {
+                                    onPressed: () {
                                       if (_selectedFile != null) {
-                                        await uploadFile(_selectedFile, _user.uid, fid);
+                                        _uploadImageHelper.uploadFile(_selectedFile, user.uid, fid);
                                       }
                                       if (contentList.isNotEmpty && howToDoList.isNotEmpty) {
                                         if (contentList.contains("")) {
@@ -456,18 +454,18 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                                             howToDoList.remove("");
                                           });
                                         }
-                                        print(_user.uid);
-                                        if (imageUrl == null) {
+                                        debugPrint(user.uid);
+                                        if (_uploadImageHelper.imageUrl == null) {
                                           Fluttertoast.showToast(msg: "جار التحميل اضغط مرة اخرى للحفظ");
                                         } else {
                                           Fluttertoast.showToast(
                                               msg: "جار المشاركة...", toastLength: Toast.LENGTH_SHORT);
-                                          UserDatabaseService(uid: _user.uid)
+                                          UserDatabaseService(uid: user.uid)
                                               .updateUserDataByOne(target: 'foods', value: fid);
                                           FoodDatabaseService(fid: fid).updateFoodData(
                                               infid: fid,
                                               name: _foodNameController.text,
-                                              image: imageUrl!,
+                                              image: _uploadImageHelper.imageUrl!,
                                               owner: userSnapshot.data!.name!,
                                               content: contentList,
                                               howToDo: howToDoList,
@@ -478,26 +476,26 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                           content: Text(
                                             "${translate.translate("Food added successfully")}",
-                                            style: TextStyle(color: mTextColor),
+                                            style: const TextStyle(color: mTextColor),
                                             textAlign: TextAlign.center,
                                           ),
-                                          duration: Duration(seconds: 1),
+                                          duration: const Duration(seconds: 1),
                                           backgroundColor: mWhiteColor,
                                         ));
                                         Navigator.pop(context);
                                       } else {
                                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                          shape: RoundedRectangleBorder(
+                                          shape: const RoundedRectangleBorder(
                                             borderRadius: BorderRadius.only(
                                                 topLeft: Radius.circular(20.0),
                                                 topRight: Radius.circular(20.0)),
                                           ),
                                           content: Text(
                                             "${translate.translate("Please fill all fields")}",
-                                            style: TextStyle(color: mTextColor),
+                                            style: const TextStyle(color: mTextColor),
                                             textAlign: TextAlign.center,
                                           ),
-                                          duration: Duration(seconds: 1),
+                                          duration: const Duration(seconds: 1),
                                           backgroundColor: mWhiteColor,
                                         ));
                                       }
@@ -516,7 +514,7 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
 
   bool onWillPop() {
     DateTime now = DateTime.now();
-    if (currentBackPressTime == null || now.difference(currentBackPressTime!) > Duration(seconds: 2)) {
+    if (currentBackPressTime == null || now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
       currentBackPressTime = now;
       Fluttertoast.showToast(msg: "اضغط مرة اخرى للخروج");
       return false;
@@ -528,28 +526,26 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
+        SizedBox(
             height: 250.0,
             child: ReorderableListView(
               children: List.generate(contentList.length, (index) {
-                _contentControllers.add(new TextEditingController());
+                _contentControllers.add(TextEditingController());
                 _contentSwitchEdit.add(false);
                 return ListTile(
                     key: UniqueKey(),
                     leading: Text("${index + 1}. "),
                     title: (contentList[index] != "" && !_contentSwitchEdit[index])
-                        ? Container(
-                            child: Text(contentList[index]),
-                          )
+                        ? Text(contentList[index])
                         : TextField(
                             controller: _contentControllers[index],
                             autofocus: true,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: '${translate.translate("Add Content")}',
-                              hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                              hintStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                             ),
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                             onSubmitted: (value) {
                               if (value != "") {
                                 if (!_contentSwitchEdit[index]) {
@@ -565,21 +561,21 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                               }
                             },
                           ),
-                    trailing: Container(
+                    trailing: SizedBox(
                       width: MediaQuery.of(context).size.width / 7.5 * 1.7,
                       child: Row(
                         children: [
                           Flexible(
                             flex: 1,
                             child: IconButton(
-                              padding: EdgeInsets.all(0),
+                              padding: const EdgeInsets.all(0),
                               icon: Icon(
                                 Icons.edit,
                                 size: 25.0,
                                 color: mGreenColor.shade300,
                               ),
                               onPressed: () {
-                                print("Edit");
+                                debugPrint("Edit");
                                 setState(() {
                                   _contentSwitchEdit[index] = !_contentSwitchEdit[index];
                                 });
@@ -589,12 +585,12 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                           Flexible(
                             flex: 1,
                             child: IconButton(
-                              icon: Icon(Icons.delete),
+                              icon: const Icon(Icons.delete),
                               color: mPrimaryColor,
                               iconSize: 25.0,
                               onPressed: () {
-                                print("Delete");
-                                print(index);
+                                debugPrint("Delete");
+                                debugPrint(index.toString());
                                 if (contentList.length > 1) {
                                   setState(() {
                                     contentList.removeAt(index);
@@ -618,13 +614,13 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                 });
               },
             )),
-        Divider(),
+        const Divider(),
         GestureDetector(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text("${translate.translate("Add")}"),
-              Icon(Icons.add),
+              const Icon(Icons.add),
             ],
           ),
           onTap: () {
@@ -640,32 +636,30 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
   }
 
   Column howToDo(AppLocalizations translate) {
-    print("how To Do $howToDoList");
+    debugPrint("how To Do $howToDoList");
     return Column(
       children: [
-        Container(
+        SizedBox(
             height: 250.0,
             child: ReorderableListView(
               children: List.generate(howToDoList.length, (index) {
-                _howToDoControllers.add(new TextEditingController());
+                _howToDoControllers.add(TextEditingController());
                 _howToDoSwitchEdit.add(false);
-                print(howToDoList[index].contains(_howToDoControllers[index].text));
+                debugPrint(howToDoList[index].contains(_howToDoControllers[index].text).toString());
                 return ListTile(
                     key: UniqueKey(),
                     leading: Text("${index + 1}. "),
                     title: (howToDoList[index] != "" && !_howToDoSwitchEdit[index])
-                        ? Container(
-                            child: Text(howToDoList[index]),
-                          )
+                        ? Text(howToDoList[index])
                         : TextField(
                             controller: _howToDoControllers[index],
                             autofocus: true,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: '${translate.translate("Add How To Do")}',
-                              hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                              hintStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                             ),
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                             onSubmitted: (value) {
                               if (value != "") {
                                 if (!_howToDoSwitchEdit[index]) {
@@ -681,21 +675,21 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                               }
                             },
                           ),
-                    trailing: Container(
+                    trailing: SizedBox(
                       width: MediaQuery.of(context).size.width / 7.5 * 1.7,
                       child: Row(
                         children: [
                           Flexible(
                             flex: 1,
                             child: IconButton(
-                              padding: EdgeInsets.all(0),
+                              padding: const EdgeInsets.all(0),
                               icon: Icon(
                                 Icons.edit,
                                 size: 25.0,
                                 color: mGreenColor.shade300,
                               ),
                               onPressed: () {
-                                print("Edit");
+                                debugPrint("Edit");
                                 setState(() {
                                   _howToDoSwitchEdit[index] = !_howToDoSwitchEdit[index];
                                 });
@@ -705,12 +699,12 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                           Flexible(
                             flex: 1,
                             child: IconButton(
-                              icon: Icon(Icons.delete),
+                              icon: const Icon(Icons.delete),
                               color: mPrimaryColor,
                               iconSize: 25.0,
                               onPressed: () {
-                                print("Delete");
-                                print(index);
+                                debugPrint("Delete");
+                                debugPrint(index.toString());
                                 if (howToDoList.length > 1) {
                                   setState(() {
                                     howToDoList.removeAt(index);
@@ -734,13 +728,13 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                 });
               },
             )),
-        Divider(),
+        const Divider(),
         GestureDetector(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text("${translate.translate("Add")}"),
-              Icon(Icons.add),
+              const Icon(Icons.add),
             ],
           ),
           onTap: () {
@@ -758,14 +752,14 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
   /// Get and crop selected image
   getImage(ImageSource source) async {
     // AppLocalizations translate = AppLocalizations.of(context);
-    this.setState(() {
+    setState(() {
       _inProcess = true;
     });
     XFile? image = await ImagePicker().pickImage(source: source);
     if (image != null) {
       CroppedFile? cropped = await ImageCropper().cropImage(
         sourcePath: image.path,
-        aspectRatio: CropAspectRatio(ratioX: 2, ratioY: 1),
+        aspectRatio: const CropAspectRatio(ratioX: 2, ratioY: 1),
         compressQuality: 100,
         maxWidth: 700,
         maxHeight: 700,
@@ -778,14 +772,14 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
         // ),
       );
 
-      this.setState(() {
+      setState(() {
         if (cropped != null) {
           _selectedFile = io.File(cropped.path);
         }
         _inProcess = false;
       });
     } else {
-      this.setState(() {
+      setState(() {
         _inProcess = false;
       });
     }
@@ -799,7 +793,7 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
         context: context,
         builder: (builder) {
           final Size size = MediaQuery.of(builder).size;
-          return new Container(
+          return Container(
             height: 150.0,
             color: Colors.transparent,
             child: Column(
@@ -809,22 +803,22 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: size.width / 12),
                     child: Align(
+                      alignment: const Alignment(1.0, 0.0),
                       child: Text(
                         "${translate.translate("Open By")} :",
                         style: Theme.of(context).textTheme.titleLarge!.copyWith(color: mWhiteColor),
                       ),
-                      alignment: Alignment(1.0, 0.0),
                     ),
                   ),
                 ),
                 Flexible(
                   flex: 3,
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: mDefaultPadding * 0.75),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.symmetric(vertical: mDefaultPadding * 0.75),
+                    decoration: const BoxDecoration(
                         color: mWhiteColor,
-                        borderRadius: new BorderRadius.only(
-                            topLeft: const Radius.circular(30.0), topRight: const Radius.circular(30.0))),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0))),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -832,7 +826,7 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             IconButton(
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.image,
                                 size: 50.0,
                                 color: mPrimaryColor,
@@ -855,7 +849,7 @@ class _AddNewFoodState extends State<AddNewFood> with UploadImageHelper {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             IconButton(
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.camera,
                                   size: 50.0,
                                 ),
@@ -889,12 +883,12 @@ class CustomShowcaseWidget extends StatelessWidget {
   final String description;
   final GlobalKey globalKey;
 
-  const CustomShowcaseWidget({required this.description, required this.globalKey, required this.child});
+  const CustomShowcaseWidget({super.key, required this.description, required this.globalKey, required this.child});
 
   @override
   Widget build(BuildContext context) => Showcase(
         key: globalKey,
-        child: child,
         description: description,
+        child: child,
       );
 }

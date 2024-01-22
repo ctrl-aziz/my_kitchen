@@ -17,19 +17,21 @@ import 'services/auth.dart';
 
 
 void main() async {
-  print("startup");
+  debugPrint("startup");
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   MobileAds.instance.initialize();
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -51,11 +53,11 @@ class _MyAppState extends State<MyApp> {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         canvasColor: Colors.transparent,
       ),
-      supportedLocales: [
+      supportedLocales: const [
         Locale('ar', ''),
         Locale('en', ''),
       ],
-      localizationsDelegates: [
+      localizationsDelegates: const [
         // ... app-specific localization delegate[s] here
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -73,14 +75,14 @@ class _MyAppState extends State<MyApp> {
             return supportedLocale;
           }
         }
-        print(supportedLocales);
+        debugPrint(supportedLocales.toString());
         return supportedLocales.first;
       },
       home: StreamProvider<AppUser?>.value(
         initialData: GoogleSignInProvider().appUser,
         value: GoogleSignInProvider().user,
         child: ShowCaseWidget(
-          builder: Builder(builder: (_) => CustomizedBottomBar()),
+          builder: Builder(builder: (_) => const CustomizedBottomBar()),
       ),
       )
     );

@@ -78,10 +78,11 @@ class GoogleSignInProvider extends ChangeNotifier {
       );
 
       final User? user = (await FirebaseAuth.instance.signInWithCredential(credential)).user;
-      print("This is ${user?.displayName}");
+      debugPrint("This is ${user?.displayName}");
 
-      if(user != null)
-      await UserDatabaseService(uid: user.uid).updateUserData(user.displayName.toString(), user.photoURL.toString(), [], [], [], []);
+      if(user != null) {
+        await UserDatabaseService(uid: user.uid).updateUserData(user.displayName.toString(), user.photoURL.toString(), [], [], [], []);
+      }
 
 
       isSigningIn = false;
@@ -94,7 +95,7 @@ class GoogleSignInProvider extends ChangeNotifier {
       await googleSignIn.disconnect();
       FirebaseAuth.instance.signOut();
     }catch(e){
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 }

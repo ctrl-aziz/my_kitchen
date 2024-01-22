@@ -10,7 +10,6 @@ import 'package:percent_indicator/percent_indicator.dart';
 
 // ignore: must_be_immutable
 class PhotoWithName extends StatelessWidget {
-
   List<Color> levelColors = [
     Colors.white,
     Colors.red,
@@ -24,6 +23,8 @@ class PhotoWithName extends StatelessWidget {
     Colors.deepPurpleAccent,
   ];
 
+  PhotoWithName({super.key});
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AppUser>(context);
@@ -35,99 +36,104 @@ class PhotoWithName extends StatelessWidget {
           if (userSnapshot.hasData) {
             return StreamBuilder<List<FoodsData>>(
                 stream: FoodDatabaseService().allFoods,
-              builder: (context, AsyncSnapshot<List<FoodsData>> snapshot) {
-                if (!snapshot.hasData) return Align(
-                  alignment: Alignment.center,
-                  child: CircularProgressIndicator(),);
-                int likeCount = 0;
-                double progressLevel = 0.0;
-                int level = 0;
-                snapshot.data!.forEach((element) {
-                  print(element.infid);
-                  if (userSnapshot.data!.foods!.contains(element
-                      .infid)) {
-                    print(element.like);
-                    likeCount += element.like!.length;
+                builder: (context, AsyncSnapshot<List<FoodsData>> snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Align(
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator(),
+                    );
                   }
-                });
-                if(likeCount <= 50){
-                  progressLevel = likeCount.toDouble() /50;
-                  level = 1;
-                }else if(likeCount <= 100){
-                  progressLevel = likeCount.toDouble() /100;
-                  level = 2;
-                }else if(likeCount <= 500){
-                  progressLevel = likeCount.toDouble() /500;
-                  level = 3;
-                }else if(likeCount <= 1000){
-                  progressLevel = likeCount.toDouble() /1000;
-                  level = 4;
-                }else if(likeCount <= 5000){
-                  progressLevel = likeCount.toDouble() /5000;
-                  level = 5;
-                }else if(likeCount <= 10000){
-                  progressLevel = likeCount.toDouble() /10000;
-                  level = 6;
-                }else if(likeCount <= 50000){
-                  progressLevel = likeCount.toDouble() /50000;
-                  level = 7;
-                }else if(likeCount <= 100000){
-                  progressLevel = likeCount.toDouble() /100000;
-                  level = 8;
-                }else if(likeCount <= 500000){
-                  progressLevel = likeCount.toDouble() /500000;
-                  level = 9;
-                }else{
-                  progressLevel = likeCount/likeCount;
-                }
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("المستوى: $level"),
-                    Stack(
-                      children: [
-                        Container(
-                          width: 110,
-                          height: 110,
-                          decoration: BoxDecoration(
-                              color: mPrimaryColor,
-                              borderRadius: BorderRadius.circular(550.0),
-                              image: DecorationImage(
-                                  image: NetworkImage(userSnapshot.data!.image!),
-                                  fit: BoxFit.cover
-                              )
+                  int likeCount = 0;
+                  double progressLevel = 0.0;
+                  int level = 0;
+                  for (var element in snapshot.data!) {
+                    debugPrint(element.infid);
+                    if (userSnapshot.data!.foods!.contains(element.infid)) {
+                      debugPrint(element.like.toString());
+                      likeCount += element.like!.length;
+                    }
+                  }
+                  if (likeCount <= 50) {
+                    progressLevel = likeCount.toDouble() / 50;
+                    level = 1;
+                  } else if (likeCount <= 100) {
+                    progressLevel = likeCount.toDouble() / 100;
+                    level = 2;
+                  } else if (likeCount <= 500) {
+                    progressLevel = likeCount.toDouble() / 500;
+                    level = 3;
+                  } else if (likeCount <= 1000) {
+                    progressLevel = likeCount.toDouble() / 1000;
+                    level = 4;
+                  } else if (likeCount <= 5000) {
+                    progressLevel = likeCount.toDouble() / 5000;
+                    level = 5;
+                  } else if (likeCount <= 10000) {
+                    progressLevel = likeCount.toDouble() / 10000;
+                    level = 6;
+                  } else if (likeCount <= 50000) {
+                    progressLevel = likeCount.toDouble() / 50000;
+                    level = 7;
+                  } else if (likeCount <= 100000) {
+                    progressLevel = likeCount.toDouble() / 100000;
+                    level = 8;
+                  } else if (likeCount <= 500000) {
+                    progressLevel = likeCount.toDouble() / 500000;
+                    level = 9;
+                  } else {
+                    progressLevel = likeCount / likeCount;
+                  }
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("المستوى: $level"),
+                      Stack(
+                        children: [
+                          Container(
+                            width: 110,
+                            height: 110,
+                            decoration: BoxDecoration(
+                                color: mPrimaryColor,
+                                borderRadius: BorderRadius.circular(550.0),
+                                image: DecorationImage(
+                                    image: NetworkImage(userSnapshot.data!.image!), fit: BoxFit.cover)),
                           ),
-                        ),
-                        Positioned(
-                            top: -2.0,
-                            child: new CircularPercentIndicator(
-                              radius: 110.0,
-                              lineWidth: 5.0,
-                              percent: progressLevel,
-                              center: new Text("", style: TextStyle(color: Colors.white),),
-                              progressColor: levelColors[level],
-                            )
-                        ),
-
-                      ],
-                    ),
-                    Text(userSnapshot.data!.name!,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("${translate.translate("Likes count")}: "),
-                        Text("$likeCount", style: TextStyle(fontWeight: FontWeight.bold),)
-                      ],
-                    ),
-                  ],
-                );
-              }
-            );
+                          Positioned(
+                              top: -2.0,
+                              child: CircularPercentIndicator(
+                                radius: 110.0,
+                                lineWidth: 5.0,
+                                percent: progressLevel,
+                                center: const Text(
+                                  "",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                progressColor: levelColors[level],
+                              )),
+                        ],
+                      ),
+                      Text(
+                        userSnapshot.data!.name!,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("${translate.translate("Likes count")}: "),
+                          Text(
+                            "$likeCount",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                    ],
+                  );
+                });
           } else {
-            return Align(
-              alignment: Alignment.center, child: CircularProgressIndicator(),);
+            return const Align(
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(),
+            );
           }
-        }
-    );
+        });
   }
 }
