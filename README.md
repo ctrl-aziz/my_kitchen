@@ -39,20 +39,20 @@ To use the app, you need to create an account or log in with an existing one. Yo
 Here are some screenshots of the app:
 
 
-<img src="/screenshots/01.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 50%;">
-<img src="/screenshots/02.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 50%;">
+<img src="/screenshots/01.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 40%;">
+<img src="/screenshots/02.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 40%;">
 
-<img src="/screenshots/04.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 50%;">
-<img src="/screenshots/05.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 50%;">
+<img src="/screenshots/04.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 40%;">
+<img src="/screenshots/05.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 40%;">
 
-<img src="/screenshots/07.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 50%;">
-<img src="/screenshots/08.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 50%;">
+<img src="/screenshots/07.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 40%;">
+<img src="/screenshots/08.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 40%;">
 
-<img src="/screenshots/09.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 50%;">
-<img src="/screenshots/06.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 50%;">
+<img src="/screenshots/09.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 40%;">
+<img src="/screenshots/06.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 40%;">
 
-<img src="/screenshots/10-01.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 50%;">
-<img src="/screenshots/10.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 50%;">
+<img src="/screenshots/10-01.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 40%;">
+<img src="/screenshots/10.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 40%;">
 
 ## License
 
