@@ -38,15 +38,21 @@ To use the app, you need to create an account or log in with an existing one. Yo
 
 Here are some screenshots of the app:
 
-![Kitchen List Page](/screenshots/01.jpg)
-![Food List Page](/screenshots/02.jpg)
-![Food Details page](/screenshots/04.jpg)
-![My Kitchen page](/screenshots/05.jpg)
-![Add new food page](/screenshots/07.jpg)
-![Random food page](/screenshots/08.jpg)
-![Random food page](/screenshots/09.jpg)
-![Profile page](/screenshots/10-01.jpg)
-![Profile page](/screenshots/10.jpg)
+
+<img src="/screenshots/01.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 50%;">
+<img src="/screenshots/02.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 50%;">
+
+<img src="/screenshots/04.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 50%;">
+<img src="/screenshots/05.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 50%;">
+
+<img src="/screenshots/07.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 50%;">
+<img src="/screenshots/08.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 50%;">
+
+<img src="/screenshots/09.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 50%;">
+<img src="/screenshots/06.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 50%;">
+
+<img src="/screenshots/10-01.jpg" alt="Ingredient page" style="float: left; margin-right: 10px; max-width: 50%;">
+<img src="/screenshots/10.jpg" alt="Shopping list page" style="float: right; margin-left: 10px; max-width: 50%;">
 
 ## License
 
